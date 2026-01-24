@@ -134,7 +134,7 @@ export default function BountiesPage() {
             <div className="container mx-auto px-4 py-12 relative z-10">
                 <header className="mb-10 text-center lg:text-left border-b border-gray-800/50 pb-8">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-                        Explore <span className="text-primary transparent-text-gradient">Bounties</span>
+                        Explore <span className="text-primary">Bounties</span>
                     </h1>
                     <p className="text-gray-400 max-w-2xl text-lg leading-relaxed">
                         Discover and contribute to open source projects. Fix bugs, build features, and earn rewards in crypto.
