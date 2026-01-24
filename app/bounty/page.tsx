@@ -113,7 +113,7 @@ export default function BountiesPage() {
         setSelectedTags(prev =>
             prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
         )
-    }, [])
+    }, [setSelectedTags])
 
     const clearFilters = () => {
         setSearchQuery("")
