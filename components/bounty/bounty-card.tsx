@@ -177,12 +177,13 @@ export function BountyCard({
             >
               {modelNames[bounty.claimingModel]}
             </Badge>
-            {bounty.milestoneCount && bounty.milestoneCount > 1 && (
+            {bounty.milestoneCount != null && (
               <Badge
                 variant="outline"
-                className="text-xs px-3 py-1 bg-[#f7fff0] dark:bg-slate-900 border-[#f2ffe5] dark:border-slate-700"
+                className="text-xs px-3 py-1 bg-[`#f7fff0`] dark:bg-slate-900 border-[`#f2ffe5`] dark:border-slate-700"
               >
-                {bounty.milestoneCount} milestones
+                {bounty.milestoneCount}{" "}
+                {bounty.milestoneCount === 1 ? "milestone" : "milestones"}
               </Badge>
             )}
           </div>
@@ -232,7 +233,7 @@ export function BountyCard({
               </span>
             </div>
           )}
-          {bounty.applicantCount != null && bounty.applicantCount > 0 && (
+          {bounty.applicantCount != null && (
             <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400 whitespace-nowrap text-xs">
               <Users className="h-3.5 w-3.5 flex-shrink-0" />
               <span>{bounty.applicantCount}</span>
