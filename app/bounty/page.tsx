@@ -28,7 +28,7 @@ import { Search, Filter, X, ArrowUpDown } from "lucide-react"
 
 export default function BountiesPage() {
     const { data, isLoading, isError, error, refetch } = useBounties()
-    const allBounties = data?.data ?? []
+    const allBounties = useMemo(() => data?.data ?? [], [data?.data])
 
     // Derived lists for filters
     const projects = useMemo(() => Array.from(new Set(allBounties.map(b => b.projectName))).sort(), [allBounties])
