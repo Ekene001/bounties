@@ -1,8 +1,10 @@
 "use client"
 
 import { useState, useMemo, useCallback } from "react"
-import { getAllBounties } from "@/lib/mock-bounty"
+import { useBounties } from "@/hooks/use-bounties"
 import { BountyCard } from "@/components/bounty/bounty-card"
+import { BountyListSkeleton } from "@/components/bounty/bounty-card-skeleton"
+import { BountyError } from "@/components/bounty/bounty-error"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
@@ -25,7 +27,8 @@ import { Label } from "@/components/ui/label"
 import { Search, Filter, X, ArrowUpDown } from "lucide-react"
 
 export default function BountiesPage() {
-    const allBounties = useMemo(() => getAllBounties(), [])
+    const { data, isLoading, isError, error, refetch } = useBounties()
+    const allBounties = data?.data ?? []
 
     // Derived lists for filters
     const projects = useMemo(() => Array.from(new Set(allBounties.map(b => b.projectName))).sort(), [allBounties])
@@ -353,7 +356,14 @@ export default function BountiesPage() {
                             </div>
                         </div>
 
-                        {filteredBounties.length > 0 ? (
+                        {isLoading ? (
+                            <BountyListSkeleton count={6} />
+                        ) : isError ? (
+                            <BountyError
+                                message={error instanceof Error ? error.message : 'Failed to load bounties'}
+                                onRetry={() => refetch()}
+                            />
+                        ) : filteredBounties.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr">
                                 {filteredBounties.map((bounty) => (
                                     <div key={bounty.id} className="h-full">
