@@ -62,9 +62,13 @@ export function useChangePassword() {
 
             // If revoking other sessions, sign out current session and redirect
             if (variables.revokeOtherSessions) {
-                await authClient.signOut();
-                queryClient.clear();
-                router.push('/auth');
+                try {
+                    await authClient.signOut();
+                } finally {
+                    // Always clear cache and redirect, even if signOut fails
+                    queryClient.clear();
+                    router.push('/auth');
+                }
             }
         },
         onError: (error: Error) => {
