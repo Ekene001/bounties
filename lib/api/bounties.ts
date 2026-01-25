@@ -40,6 +40,7 @@ export interface BountyListParams extends PaginationParams, SortParams {
     type?: BountyType;
     difficulty?: DifficultyLevel;
     projectId?: string;
+    tags?: string | string[];
     search?: string;
 }
 
@@ -62,8 +63,14 @@ export type UpdateBountyInput = z.infer<typeof updateBountySchema>;
 const BOUNTIES_ENDPOINT = '/api/bounties';
 
 export const bountiesApi = {
-    list: (params?: BountyListParams): Promise<PaginatedResponse<Bounty>> =>
-        get<PaginatedResponse<Bounty>>(BOUNTIES_ENDPOINT, { params: params as Record<string, unknown> }),
+    list: (params?: BountyListParams): Promise<PaginatedResponse<Bounty>> => {
+        // Convert tags array to comma-separated string for query params
+        const queryParams: Record<string, unknown> = { ...params };
+        if (queryParams.tags && Array.isArray(queryParams.tags)) {
+            queryParams.tags = queryParams.tags.join(',');
+        }
+        return get<PaginatedResponse<Bounty>>(BOUNTIES_ENDPOINT, { params: queryParams });
+    },
 
     getById: (id: string): Promise<Bounty> =>
         get<Bounty>(`${BOUNTIES_ENDPOINT}/${id}`),
