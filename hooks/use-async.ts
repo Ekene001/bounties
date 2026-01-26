@@ -18,6 +18,8 @@ export function useAsync<T, E = string>(
     const [error, setError] = React.useState<E | null>(null)
 
     // The execute function wraps asyncFunction and handles state updates
+    const isMountedRef = React.useRef(true)
+
     const execute = React.useCallback(() => {
         setStatus("pending")
         setValue(null)
@@ -25,12 +27,16 @@ export function useAsync<T, E = string>(
 
         return asyncFunction()
             .then((response) => {
-                setValue(response)
-                setStatus("success")
+                if (isMountedRef.current) {
+                    setValue(response)
+                    setStatus("success")
+                }
             })
             .catch((error) => {
-                setError(error)
-                setStatus("error")
+                if (isMountedRef.current) {
+                    setError(error)
+                    setStatus("error")
+                }
             })
     }, [asyncFunction])
 
@@ -41,6 +47,13 @@ export function useAsync<T, E = string>(
             execute()
         }
     }, [execute, immediate])
+
+    // Track mounted state to prevent updates after unmount
+    React.useEffect(() => {
+        return () => {
+            isMountedRef.current = false
+        }
+    }, [])
 
     return { execute, status, value, error }
 }
