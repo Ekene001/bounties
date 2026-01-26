@@ -25,3 +25,15 @@ export type BountyQueryKey =
     | ReturnType<typeof bountyKeys.infinite>
     | ReturnType<typeof bountyKeys.detail>;
 
+/**
+ * Query Key Factory for Authentication
+ * 
+ * Hierarchical structure for auth/user cache management:
+ * - authKeys.all → invalidates everything auth-related
+ * - authKeys.session() → invalidates session data
+ */
+export const authKeys = {
+    all: ['auth'] as const,
+    session: () => [...authKeys.all, 'session'] as const,
+};
+

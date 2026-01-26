@@ -1,5 +1,5 @@
 // Query Keys
-export { bountyKeys, type BountyQueryKey } from './query-keys';
+export { bountyKeys, type BountyQueryKey, authKeys } from './query-keys';
 
 // Query Options
 export {
