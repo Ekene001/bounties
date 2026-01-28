@@ -2,6 +2,7 @@ export type Project = {
   id: string;
   name: string;
   logoUrl: string | null;
+  websiteUrl?: string;
   description: string;
   tags: string[];
   bountyCount: number;
@@ -13,4 +14,10 @@ export type Project = {
   bannerUrl: string | null;
   createdAt: string;
   updatedAt: string;
+  maintainers?: Array<{
+    userId: string;
+    username: string;
+    avatarUrl?: string;
+    profileUrl?: string;
+  }>;
 };

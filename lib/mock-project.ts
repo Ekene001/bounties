@@ -5,6 +5,7 @@ export const mockProjects: Project[] = [
     id: "boundless",
     name: "Boundless",
     logoUrl: "/logo.svg",
+    websiteUrl: "https://www.boundlessfi.xyz",
     description:
       "Boundless is building a better way to ship open-source work with transparent funding, milestone-based payouts, and community validation.",
     tags: ["Infrastructure", "Grants", "Bounties", "Stellar"],
@@ -18,6 +19,20 @@ export const mockProjects: Project[] = [
       "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2832&auto=format&fit=crop",
     createdAt: "2025-01-05T12:00:00Z",
     updatedAt: "2025-01-18T14:30:00Z",
+    maintainers: [
+      {
+        userId: "1",
+        username: "boundless-admin",
+        avatarUrl: "https://github.com/shadcn.png",
+        profileUrl: "https://github.com/boundless-admin",
+      },
+      {
+        userId: "2",
+        username: "dev-team",
+        avatarUrl: "https://github.com/vercel.png",
+        profileUrl: "https://github.com/dev-team",
+      },
+    ],
   },
   {
     id: "nivo-ui-stellar-build",
@@ -40,6 +55,7 @@ export const mockProjects: Project[] = [
     id: "soroban-kit",
     name: "Soroban Kit",
     logoUrl: null,
+    websiteUrl: "https://soroban-kit.dev",
     description:
       "Utilities, templates, and SDK helpers for building Soroban apps. Includes testing harnesses, example contracts, and deployment workflows.",
     tags: ["DeFi", "Infrastructure", "SDK", "Soroban"],
@@ -53,11 +69,20 @@ export const mockProjects: Project[] = [
       "https://images.unsplash.com/photo-1644088379091-d574269d422f?q=80&w=2893&auto=format&fit=crop",
     createdAt: "2025-01-12T08:30:00Z",
     updatedAt: "2025-01-21T10:05:00Z",
+    maintainers: [
+      {
+        userId: "3",
+        username: "soroban-core",
+        avatarUrl: "https://github.com/soroban-core.png",
+        profileUrl: "https://github.com/soroban-core",
+      },
+    ],
   },
   {
     id: "stellar-privacy-lab",
     name: "Stellar Privacy Lab",
     logoUrl: null,
+    websiteUrl: "https://privacy.stellar.org",
     description:
       "Research and prototypes focused on privacy-preserving primitives and integrations for Stellar—bringing safer defaults to on-chain apps.",
     tags: ["Privacy", "Research", "Crypto"],
@@ -71,6 +96,20 @@ export const mockProjects: Project[] = [
       "https://images.unsplash.com/photo-1639762681057-074b7f938ba0?q=80&w=2832&auto=format&fit=crop",
     createdAt: "2025-01-02T11:00:00Z",
     updatedAt: "2025-01-23T18:45:00Z",
+    maintainers: [
+      {
+        userId: "4",
+        username: "privacy-research",
+        avatarUrl: "https://github.com/privacy-research.png",
+        profileUrl: "https://github.com/privacy-research",
+      },
+      {
+        userId: "5",
+        username: "stellar-labs",
+        avatarUrl: "https://github.com/stellar-labs.png",
+        profileUrl: "https://github.com/stellar-labs",
+      },
+    ],
   },
 ];
 

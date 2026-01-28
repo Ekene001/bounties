@@ -21,6 +21,19 @@ export async function GET(request: Request) {
     const difficulty = searchParams.get('difficulty');
     if (difficulty) filtered = filtered.filter(b => b.difficulty === difficulty);
 
+    const projectId = searchParams.get('projectId');
+    if (projectId) filtered = filtered.filter(b => b.projectId === projectId);
+
+    const tags = searchParams.get('tags');
+    if (tags) {
+        const tagArray = tags.split(',').filter(Boolean);
+        if (tagArray.length > 0) {
+            filtered = filtered.filter(b => 
+                tagArray.some(tag => b.tags.includes(tag))
+            );
+        }
+    }
+
     const search = searchParams.get('search');
     if (search) {
         const lower = search.toLowerCase();
