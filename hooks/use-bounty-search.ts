@@ -19,6 +19,7 @@ export function useBountySearch() {
         const saved = localStorage.getItem(RECENT_SEARCHES_KEY);
         if (saved) {
             try {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setRecentSearches(JSON.parse(saved));
             } catch (e) {
                 console.error('Failed to parse recent searches', e);
