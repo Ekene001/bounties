@@ -18,6 +18,15 @@ export async function POST(
             return NextResponse.json({ error: 'Missing contributorId' }, { status: 400 });
         }
 
+        const bounty = BountyStore.getBountyById(bountyId);
+        if (!bounty) {
+            return NextResponse.json({ error: 'Bounty not found' }, { status: 404 });
+        }
+
+        if (bounty.claimingModel !== 'milestone') {
+            return NextResponse.json({ error: 'Invalid claiming model' }, { status: 400 });
+        }
+
         // Check if already joined
         const existing = BountyStore.getMilestoneParticipationsByBounty(bountyId)
             .find(p => p.contributorId === contributorId);

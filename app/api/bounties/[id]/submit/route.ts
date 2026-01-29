@@ -18,6 +18,11 @@ export async function POST(
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
+        const bounty = BountyStore.getBountyById(bountyId);
+        if (!bounty) {
+            return NextResponse.json({ error: 'Bounty not found' }, { status: 404 });
+        }
+
         const submission: Submission = {
             id: generateId(),
             bountyId,

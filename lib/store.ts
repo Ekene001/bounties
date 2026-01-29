@@ -9,8 +9,12 @@ class BountyStoreData {
     milestoneParticipations: MilestoneParticipation[] = [];
 }
 
-const globalStore: BountyStoreData = (global as any).bountyStore || new BountyStoreData();
-if (process.env.NODE_ENV !== 'production') (global as any).bountyStore = globalStore;
+declare global {
+    var bountyStore: BountyStoreData | undefined;
+}
+
+const globalStore: BountyStoreData = globalThis.bountyStore || new BountyStoreData();
+if (process.env.NODE_ENV !== 'production') globalThis.bountyStore = globalStore;
 
 export const BountyStore = {
     // Bounties

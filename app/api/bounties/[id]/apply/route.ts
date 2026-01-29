@@ -17,6 +17,19 @@ export async function POST(
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
+        const bounty = BountyStore.getBountyById(bountyId);
+        if (!bounty) {
+            return NextResponse.json({ error: 'Bounty not found' }, { status: 404 });
+        }
+
+        const existingApplication = BountyStore.getApplicationsByBounty(bountyId).find(
+            (app) => app.applicantId === applicantId
+        );
+
+        if (existingApplication) {
+            return NextResponse.json({ error: 'Application already exists' }, { status: 409 });
+        }
+
         const application: Application = {
             id: generateId(),
             bountyId: bountyId,

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { BountyStore } from '@/lib/store';
-import { MilestoneStatus } from '@/types/participation';
+// import { MilestoneStatus } from '@/types/participation';
 
 export async function POST(
     request: Request,
@@ -16,6 +16,10 @@ export async function POST(
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
+        if (!['advance', 'complete', 'remove'].includes(action)) {
+            return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+        }
+
         const participations = BountyStore.getMilestoneParticipationsByBounty(bountyId);
         const participation = participations.find(p => p.contributorId === contributorId);
 
@@ -29,13 +33,10 @@ export async function POST(
 
         if (action === 'advance') {
             updates.currentMilestone = participation.currentMilestone + 1;
-            updates.status = 'advanced'; // Or keep 'active'? Using 'advanced' to signal state change
+            updates.status = 'advanced';
         } else if (action === 'complete') {
             updates.status = 'completed';
         } else if (action === 'remove') {
-            // In a real DB we might delete or set status to dropped
-            updates.status = 'active'; // Reset or specific status? Let's assume there is no 'dropped' yet, but usually we would have one. 
-            // For now let's just not support remove via this specific endpoint or add a status.
             return NextResponse.json({ error: 'Remove action not supported yet' }, { status: 400 });
         }
 
