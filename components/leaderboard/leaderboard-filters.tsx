@@ -63,7 +63,7 @@ export function LeaderboardFilters({ filters, onFilterChange }: LeaderboardFilte
     };
 
     const handleTagToggle = (tag: string) => {
-        const currentTags = filters.tags || [];
+        const currentTags = filters.tags ?? [];
         const newTags = currentTags.includes(tag)
             ? currentTags.filter((t) => t !== tag)
             : [...currentTags, tag];

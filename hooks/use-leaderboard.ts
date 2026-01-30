@@ -16,8 +16,8 @@ export const useLeaderboard = (filters: LeaderboardFilters, limit: number = 20) 
         queryFn: ({ pageParam = 1 }) =>
             leaderboardApi.fetchLeaderboard(filters, { page: pageParam, limit }),
         getNextPageParam: (lastPage, allPages) => {
-            const loadedCount = allPages.flatMap(p => p.entries).length;
-            if (loadedCount < lastPage.totalCount) {
+            // Optimization: Use simple math instead of iterating all entries
+            if (allPages.length * limit < lastPage.totalCount) {
                 return allPages.length + 1;
             }
             return undefined;
@@ -30,7 +30,7 @@ export const useLeaderboard = (filters: LeaderboardFilters, limit: number = 20) 
 export const useUserRank = (userId?: string) => {
     return useQuery({
         queryKey: LEADERBOARD_KEYS.user(userId || ''),
-        queryFn: () => leaderboardApi.fetchUserRank(userId!),
+        queryFn: () => leaderboardApi.fetchUserRank(userId),
         enabled: !!userId,
     });
 };

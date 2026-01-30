@@ -25,6 +25,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Search, Filter } from "lucide-react";
+import { MiniLeaderboard } from "@/components/leaderboard/mini-leaderboard";
 
 export default function BountiesPage() {
   const { data, isLoading, isError, error, refetch } = useBounties();
@@ -209,15 +210,15 @@ export default function BountiesPage() {
                     rewardRange[0] !== 0 ||
                     rewardRange[1] !== 5000 ||
                     statusFilter !== "open") && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={clearFilters}
-                      className="h-6 text-[10px] text-primary hover:text-primary/80 p-0 hover:bg-transparent"
-                    >
-                      Reset
-                    </Button>
-                  )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearFilters}
+                        className="h-6 text-[10px] text-primary hover:text-primary/80 p-0 hover:bg-transparent"
+                      >
+                        Reset
+                      </Button>
+                    )}
                 </div>
 
                 <div className="space-y-6">
@@ -423,6 +424,10 @@ export default function BountiesPage() {
                   </Accordion>
                 </div>
               </div>
+
+              <div className="hidden lg:block">
+                <MiniLeaderboard className="w-full" />
+              </div>
             </div>
           </aside>
 
@@ -498,7 +503,7 @@ export default function BountiesPage() {
             )}
           </main>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }

@@ -24,7 +24,8 @@ export const leaderboardApi = {
         return get<LeaderboardResponse>(LEADERBOARD_ENDPOINT, { params });
     },
 
-    fetchUserRank: async (userId: string): Promise<{ rank: number, contributor: LeaderboardContributor }> => {
+    fetchUserRank: async (userId?: string): Promise<{ rank: number, contributor: LeaderboardContributor } | null> => {
+        if (!userId) return null;
         return get<{ rank: number, contributor: LeaderboardContributor }>(`${LEADERBOARD_ENDPOINT}/user/${userId}`);
     },
 
