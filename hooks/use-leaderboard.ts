@@ -51,6 +51,14 @@ export const usePrefetchLeaderboardPage = () => {
             queryKey: LEADERBOARD_KEYS.list(filters),
             queryFn: ({ pageParam }) => leaderboardApi.fetchLeaderboard(filters, { page: pageParam as number, limit }),
             initialPageParam: 1,
+            getNextPageParam: (lastPage, allPages) => {
+                const loadedCount = allPages.flatMap(p => p.entries).length;
+                if (loadedCount < lastPage.totalCount) {
+                    return allPages.length + 1;
+                }
+                return undefined;
+            },
+            pages: page // Prefetch up to this many pages if needed
         });
     };
 };
