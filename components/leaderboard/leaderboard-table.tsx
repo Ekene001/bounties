@@ -79,13 +79,13 @@ export function LeaderboardTable({
             <Table>
                 <TableHeader>
                     <TableRow className="hover:bg-transparent border-b border-border">
-                        <TableHead className="w-[80px] text-center font-bold text-white">RANK</TableHead>
-                        <TableHead className="font-bold text-white">CONTRIBUTOR</TableHead>
-                        <TableHead className="hidden md:table-cell font-bold text-white">TIER</TableHead>
-                        <TableHead className="text-right font-bold text-white">SCORE</TableHead>
-                        <TableHead className="text-right hidden sm:table-cell font-bold text-white">COMPLETED</TableHead>
-                        <TableHead className="text-right hidden lg:table-cell font-bold text-white">EARNINGS</TableHead>
-                        <TableHead className="text-right font-bold text-white">STREAK</TableHead>
+                        <TableHead className="w-20 text-center font-bold ">RANK</TableHead>
+                        <TableHead className="font-bold ">CONTRIBUTOR</TableHead>
+                        <TableHead className="hidden md:table-cell font-bold ">TIER</TableHead>
+                        <TableHead className="text-right font-bold ">SCORE</TableHead>
+                        <TableHead className="text-right hidden sm:table-cell font-bold ">COMPLETED</TableHead>
+                        <TableHead className="text-right hidden lg:table-cell font-bold ">EARNINGS</TableHead>
+                        <TableHead className="text-right font-bold ">STREAK</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -117,7 +117,7 @@ export function LeaderboardTable({
                                             <AvatarFallback className="bg-secondary text-secondary-foreground">{entry.contributor.displayName[0]}</AvatarFallback>
                                         </Avatar>
                                         <div className="flex flex-col">
-                                            <span className={cn("font-semibold text-white", isCurrentUser && "text-primary")}>
+                                            <span className={cn("font-semibold ", isCurrentUser && "text-primary")}>
                                                 {entry.contributor.displayName}
                                                 {isCurrentUser && " (You)"}
                                             </span>
@@ -140,16 +140,16 @@ export function LeaderboardTable({
                                         ))}
                                     </div>
                                 </TableCell>
-                                <TableCell className="hidden md:table-cell text-white">
+                                <TableCell className="hidden md:table-cell">
                                     <TierBadge tier={entry.contributor.tier} />
                                 </TableCell>
-                                <TableCell className="text-right font-mono text-white font-medium">
+                                <TableCell className="text-right font-mono font-medium">
                                     {entry.contributor.totalScore.toLocaleString()}
                                 </TableCell>
-                                <TableCell className="text-right hidden sm:table-cell text-white">
+                                <TableCell className="text-right hidden sm:table-cell">
                                     {entry.contributor.stats.totalCompleted}
                                 </TableCell>
-                                <TableCell className="text-right hidden lg:table-cell font-mono text-white">
+                                <TableCell className="text-right hidden lg:table-cell font-mono">
                                     ${entry.contributor.stats.totalEarnings.toLocaleString()}
                                 </TableCell>
                                 <TableCell className="text-right">
@@ -163,7 +163,7 @@ export function LeaderboardTable({
                     {isFetchingNextPage && (
                         <TableRow>
                             <TableCell colSpan={7} className="text-center py-4">
-                                <div className="flex items-center justify-center text-white/70 text-sm">
+                                <div className="flex items-center justify-center text-sm">
                                     Loading more...
                                 </div>
                             </TableCell>

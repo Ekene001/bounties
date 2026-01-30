@@ -14,13 +14,13 @@ export function ProjectCard({ project }: { project: Project }) {
       aria-label={`View project ${project.name}`}
     >
       <Card className="h-full overflow-hidden transition-all duration-300 group-hover:border-gray-700 group-hover:shadow-2xl group-hover:shadow-green-500/10 py-0">
-        <div className="relative aspect-[16/9] w-full bg-gradient-to-br from-[#0D1A1E] to-[#0A1214] flex items-center justify-center p-6 border-b border-white/5">
+        <div className="relative aspect-[16/9] w-full bg-gradient-to-br from-[#0D1A1E] to-[#0A1214] flex items-center justify-center p-6 border-b ">
           <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
             {project.tags.slice(0, 3).map((tag) => (
               <Badge
                 key={tag}
                 variant="outline"
-                className="bg-[#1A1F21]/80 backdrop-blur-sm border-white/10 text-white/90 text-[10px] px-2 py-0 h-6 font-medium"
+                className="backdrop-blur-sm text-[10px] px-2 py-0 h-6 font-medium bg-accent/80"
               >
                 {tag}
               </Badge>
@@ -28,7 +28,7 @@ export function ProjectCard({ project }: { project: Project }) {
             {project.tags.length > 3 && (
               <Badge
                 variant="outline"
-                className="bg-[#1A1F21]/80 backdrop-blur-sm border-white/10 text-white/60 text-[10px] px-2 py-0 h-6 font-medium"
+                className=" backdrop-blur-sm border-white/10 text-[10px] px-2 py-0 h-6 font-medium bg-accent"
               >
                 +{project.tags.length - 3}
               </Badge>
@@ -37,14 +37,13 @@ export function ProjectCard({ project }: { project: Project }) {
 
           <Badge
             className={cn(
-              "absolute top-3 right-3 z-10 bg-[#1A1F21]/80 backdrop-blur-sm border-white/10 text-white/90 text-[10px] px-3 py-1 h-6 font-medium",
+              "absolute top-3 right-3 z-10 bg-[#1A1F21]/80 backdrop-blur-sm  text-[10px] px-3 py-1 h-6 font-medium",
               project.status === "Active" &&
-              "text-green-400 border-green-500/20",
+                "text-green-400 border-green-500/20",
             )}
           >
             {project.status}
           </Badge>
-
 
           <div className="flex flex-col items-center justify-center space-y-3">
             {project.logoUrl ? (
@@ -57,7 +56,7 @@ export function ProjectCard({ project }: { project: Project }) {
                 className="h-10 w-auto object-contain brightness-90 grayscale hover:grayscale-0 transition-all opacity-80"
               />
             ) : (
-              <span className="text-2xl font-bold tracking-tighter text-white/40 italic">
+              <span className="text-2xl font-bold tracking-tighter  italic">
                 {project.name}
               </span>
             )}
@@ -101,14 +100,12 @@ export function ProjectCard({ project }: { project: Project }) {
           </div>
 
           {/* Footer Section */}
-          <div className="border-t border-white/5 px-4 py-3 bg-[#0D0F10]">
+          <div className="border-t border-white/5 px-4 py-3 ">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-white/40 font-semibold uppercase tracking-widest">
+              <span className="text-xs  font-semibold uppercase tracking-widest">
                 {project.status}
               </span>
-              <span className="text-[10px] text-white/30 font-medium">
-                Updated 2d ago
-              </span>
+              <span className="text-[10px] font-medium">Updated 2d ago</span>
             </div>
           </div>
         </CardContent>

@@ -81,13 +81,13 @@ export function LeaderboardFilters({ filters, onFilterChange }: LeaderboardFilte
     const hasActiveFilters = filters.timeframe !== "ALL_TIME" || filters.tier || (filters.tags?.length || 0) > 0;
 
     return (
-        <div className="flex flex-wrap items-center gap-3 text-white">
+        <div className="flex flex-wrap items-center gap-3">
             {/* Timeframe Select */}
             <Select
                 value={filters.timeframe}
                 onValueChange={(val) => updateFilter("timeframe", val as LeaderboardTimeframe)}
             >
-                <SelectTrigger className="w-[140px] bg-background-card border-border/50">
+                <SelectTrigger className="w-36 bg-background-card border-border/50">
                     <SelectValue placeholder="Timeframe" />
                 </SelectTrigger>
                 <SelectContent>

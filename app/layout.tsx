@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
-import { GlobalNavbar } from "@/components/global-navbar";
+// replaced with resizable global navbar
+import GlobalResizableNavbar from "@/components/ui/global-resizable-navbar";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,16 +27,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>
-          <div suppressHydrationWarning>
-            <GlobalNavbar />
-            {children}
-          </div>
-        </QueryProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <QueryProvider>
+            <div suppressHydrationWarning>
+              <GlobalResizableNavbar />
+              {children}
+            </div>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

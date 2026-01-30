@@ -93,7 +93,7 @@ export function ProjectsDiscovery({
     <div className="min-h-screen font-sans selection:bg-green-500/30">
       <div className="container mx-auto max-w-7xl px-4 py-12 space-y-16">
         {/* Hero Section */}
-        <section className="relative overflow-hidden rounded-[32px] bg-[#0A0C0D] border border-white/5 p-8 md:p-16">
+        <section className="relative overflow-hidden rounded-4xl bg-[#0A0C0D] border border-white/5 p-8 md:p-16">
           <div className="relative z-10 max-w-2xl space-y-8">
             <div className="space-y-4">
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.1]">
@@ -134,13 +134,13 @@ export function ProjectsDiscovery({
                 value={sortKey}
                 onValueChange={(v) => setSortKey(v as SortKey)}
               >
-                <SelectTrigger className="w-full md:w-[180px] h-12 bg-[#1A1F21] border-white/5 rounded-xl text-white/90 font-medium focus:ring-green-500/20 px-4">
+                <SelectTrigger className="w-full md:w-45 h-12! rounded-xl font-medium focus:ring-green-500/20 px-4">
                   <div className="flex items-center gap-2">
-                    <ListFilter className="size-4 text-white/40" />
+                    <ListFilter className="size-4" />
                     <SelectValue placeholder="Sort..." />
                   </div>
                 </SelectTrigger>
-                <SelectContent className="bg-[#1A1F21] border-white/10 text-white">
+                <SelectContent className="border-white/10">
                   <SelectItem value="newest">Newest First</SelectItem>
                   <SelectItem value="mostOpen">Most Open</SelectItem>
                   <SelectItem value="recentlyUpdated">
@@ -149,15 +149,15 @@ export function ProjectsDiscovery({
                 </SelectContent>
               </Select>
 
-              <div className="h-12 px-4 rounded-xl bg-[#1A1F21] border border-white/5 flex items-center gap-3">
+              <div className="h-12 px-4 rounded-xl bg-card border flex items-center gap-3">
                 <Switch checked={hasOpenBounties} onCheckedChange={setHasOpenBounties} />
-                <Label className="text-white/80 font-medium text-sm">Has open bounties</Label>
+                <Label className=" font-medium text-sm">Has open bounties</Label>
               </div>
 
               {showClear ? (
                 <Button
                   variant="outline"
-                  className="h-12  rounded-xl text-white/80 font-medium px-4 hover:bg-white/5"
+                  className="h-12 rounded-xl font-medium px-4 "
                   onClick={clearAll}
                 >
                   <X className="size-4" />
@@ -167,23 +167,23 @@ export function ProjectsDiscovery({
             </div>
 
             <div className="relative w-full md:max-w-md group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-white/20 group-focus-within:text-green-400 transition-colors" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 group-focus-within:text-green-400 transition-colors" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search project..."
-                className="h-12 w-full pl-12 bg-[#0A0C0D] border-white/5 rounded-xl text-white placeholder:text-white/20 focus-visible:ring-green-500/20 focus-visible:border-white/10 transition-all font-medium"
+                className="h-12 w-full pl-12  rounded-xl  focus-visible:ring-green-500/20 focus-visible:border-white/10 transition-all font-medium"
               />
             </div>
           </section>
 
           <section className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-white/70 font-medium">Tags</Label>
+              <Label className=" font-medium">Tags</Label>
               {selectedTags.length > 0 ? (
                 <button
                   type="button"
-                  className="text-xs text-white/40 hover:text-white/70 underline underline-offset-4"
+                  className="text-xs underline underline-offset-4"
                   onClick={() => setSelectedTags([])}
                 >
                   Clear tags
@@ -204,7 +204,7 @@ export function ProjectsDiscovery({
                     value={tag}
                     variant="outline"
                     size="sm"
-                    className="border  data-[state=on]:bg-white/10 data-[state=on]:text-white"
+                    className="border  "
                   >
                     {tag}
                   </ToggleGroupItem>

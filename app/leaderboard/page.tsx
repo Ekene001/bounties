@@ -82,10 +82,10 @@ export default function LeaderboardPage() {
             {/* Hero Header */}
             <div className="border-b border-border/40">
                 <div className="container mx-auto px-4 py-12">
-                    <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-3">
+                    <h1 className="text-3xl md:text-4xl font-bold  tracking-tight mb-3">
                         Leaderboard
                     </h1>
-                    <p className="text-lg text-white/70 max-w-2xl">
+                    <p className="text-lg max-w-2xl">
                         Recognizing the top contributors in the ecosystem.
                     </p>
                 </div>

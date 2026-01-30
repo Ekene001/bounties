@@ -51,10 +51,10 @@ export function BountyCard({
   return (
     <Card
       className={cn(
-        "overflow-hidden w-full max-w-xs rounded-4xl cursor-pointer transition-all duration-300",
-        "hover:shadow-lg hover:border-primary/60 hover:scale-[1.02]",
-        "border border-slate-200 dark:border-slate-800",
-        variant === "list" && "flex flex-col",
+        "overflow-hidden w-full max-w-sm h-full rounded-lg cursor-pointer transition-all duration-300",
+        "flex flex-col",
+        "p-0",
+        variant === "list" && "md:flex-row",
       )}
       role="button"
       tabIndex={0}
@@ -66,126 +66,83 @@ export function BountyCard({
         }
       }}
     >
-      {/* Main Content Section */}
-
-      <div
-        className={cn(
-          "flex-1 flex flex-col",
-          variant === "list" && "md:flex-row md:items-center",
-        )}
-      >
-        <CardHeader
-          className={cn(
-            "pb-3 px-4 sm:px-5",
-            variant === "list" && "md:flex-1 md:pb-0",
-          )}
-        >
-          {/* Header Row with Status and Reward */}
-
-          <div className="flex items-start justify-between gap-2 mb-3 flex-wrap">
+      <div className="flex-1 flex flex-col justify-between">
+        <CardHeader className="pb-4 px-5 pt-5">
+          <div className="flex items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
-              <div
-                className={cn(
-                  "w-2.5 h-2.5 rounded-full animate-pulse",
-                  status.dotColor,
-                )}
-              />
-              <Badge variant={status.variant} className="text-xs">
+              <div className={cn("w-2 h-2 rounded-full", status.dotColor)} />
+              <Badge variant={status.variant} className="text-xs font-medium">
                 {status.label}
               </Badge>
             </div>
 
             {variant === "grid" && bounty.rewardAmount && (
               <div className="text-right">
-                <div className="text-lg font-bold text-slate-900 dark:text-slate-50">
-                  {bounty.rewardAmount.toLocaleString()}
+                <div className="text-xl font-bold ">
+                  ${bounty.rewardAmount.toLocaleString()}
                 </div>
-                <div className="text-[10px] text-slate-400 dark:text-slate-400 font-medium">
+                <div className="text-[11px] font-medium">
                   {bounty.rewardCurrency}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Title and Description */}
-
-          <CardTitle className="text-base font-semibold line-clamp-2 text-slate-900 dark:text-slate-50 mb-1">
+          <CardTitle className="text-base font-semibold line-clamp-2 mb-2 leading-snug">
             {bounty.issueTitle}
           </CardTitle>
-          <CardDescription className="line-clamp-2 text-xs text-slate-600 dark:text-slate-400">
+
+          <CardDescription className="line-clamp-2 text-sm mb-4">
             {bounty.description}
           </CardDescription>
 
-          {/* Type and Difficulty Badges */}
-
-          <div className="flex flex-wrap gap-2 mt-3">
-            <Badge
-              variant="outline"
-              className="text-xs px-3 py-1 bg-[#f7fff0] dark:bg-slate-900 border-[#f2ffe5] dark:border-slate-700"
-            >
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="outline" className="text-xs px-2.5 py-1 ">
               {bounty.type}
             </Badge>
             {bounty.difficulty && (
-              <Badge
-                variant="outline"
-                className="text-xs px-3 py-1 bg-[#f7fff0] dark:bg-slate-900 border-[#f2ffe5] dark:border-slate-700"
-              >
+              <Badge variant="outline" className="text-xs px-2.5 py-1 ">
                 {bounty.difficulty}
               </Badge>
             )}
             {bounty.tags.length > 0 && (
-              <Badge
-                variant="outline"
-                className="text-xs px-3 py-1 bg-[#f7fff0] dark:bg-slate-900 border-[#f2ffe5] dark:border-slate-700"
-              >
+              <Badge variant="outline" className="text-xs px-2.5 py-1 ">
                 {bounty.tags.slice(0, 1).join(", ")}
               </Badge>
             )}
           </div>
         </CardHeader>
 
-        {/* List Variant Reward Display */}
-
         {variant === "list" && bounty.rewardAmount && (
-          <div className="px-4 sm:px-6 py-3 md:w-48 flex flex-col justify-center items-end border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
-            <div className="text-2xl font-bold text-slate-900 dark:text-slate-50">
-              {bounty.rewardAmount.toLocaleString()}
+          <div className="px-5 py-3 md:w-48 flex flex-col justify-center items-end border-t md:border-t-0 md:border-l">
+            <div className="text-2xl font-bold ">
+              ${bounty.rewardAmount.toLocaleString()}
             </div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-              {bounty.rewardCurrency}
-            </div>
+            <div className="text-xs font-medium">{bounty.rewardCurrency}</div>
           </div>
         )}
       </div>
 
-      {/* Footer with Project and Meta Info */}
-
-      <CardFooter className="border-t border-[#f0f0f0] dark:border-slate-700 flex flex-wrap sm:items-center justify-center md:justify-between gap-3 py-3 px-4 text-xs text-slate-600 dark:text-slate-400">
-        {/* Project Info */}
-        <div className="flex items-center gap-2 min-w-0 order-1 sm:order-none">
+      <CardFooter className="border-t flex items-center justify-between gap-3 py-3 px-5">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           {bounty.projectLogoUrl && (
-            <Avatar className="h-6 w-6 border border-slate-200 dark:border-slate-700 flex-shrink-0">
-              <AvatarImage src={bounty.projectLogoUrl} />
-              <AvatarFallback className="text-xs font-medium">
+            <Avatar className="h-5 w-5 border shrink-0">
+              <AvatarImage src={bounty.projectLogoUrl || "/placeholder.svg"} />
+              <AvatarFallback className="text-[10px] font-medium">
                 {bounty.projectName?.[0]?.toUpperCase()}
               </AvatarFallback>
             </Avatar>
           )}
-          <span className="truncate text-xs font-medium text-slate-700 dark:text-slate-300">
+          <span className="truncate text-xs font-medium">
             {bounty.projectName}
           </span>
         </div>
 
-        {/* Meta Information */}
-
-        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 order-2 sm:order-none">
-          <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400 whitespace-nowrap text-xs">
-            <Clock className="h-3.5 w-3.5 flex-shrink-0" />
-            <span className="hidden sm:inline">{timeLeft}</span>
-            <span className="sm:hidden">
-              {timeLeft.replace(" ago", "").replace(" from now", "")}
-            </span>
-          </div>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Clock className="h-3.5 w-3.5" />
+          <span className="text-xs whitespace-nowrap">
+            {timeLeft.replace(" ago", "").replace(" from now", "")}
+          </span>
         </div>
       </CardFooter>
     </Card>

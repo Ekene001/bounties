@@ -58,7 +58,7 @@ export function BountyContent({ bounty }: BountyContentProps) {
             <h2 className="mb-3 text-lg font-semibold">Tags</h2>
             <div className="flex flex-wrap gap-2">
               {bounty.tags.map((tag) => (
-                <Badge key={tag} className="bg-gray-800 text-gray-300 border-gray-700 text-xs">
+                <Badge key={tag} className=" text-xs">
                   {tag}
                 </Badge>
               ))}
