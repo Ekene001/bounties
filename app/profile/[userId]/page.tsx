@@ -1,6 +1,6 @@
 "use client";
 
-import { useContributorReputation, useLinkWallet } from "@/hooks/use-reputation";
+import { useContributorReputation } from "@/hooks/use-reputation";
 import { ReputationCard } from "@/components/reputation/reputation-card";
 import { CompletionHistory } from "@/components/reputation/completion-history";
 import { Button } from "@/components/ui/button";
@@ -9,11 +9,32 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useMemo } from "react";
 
 export default function ProfilePage() {
     const params = useParams();
     const userId = params.userId as string;
     const { data: reputation, isLoading, error } = useContributorReputation(userId);
+
+    const mockHistory = useMemo(() => {
+        if (!reputation) return [];
+        return Array(reputation.stats.totalCompleted).fill(null).map((_, i) => ({
+            id: `bounty-${i}`,
+            bountyId: `b-${i}`,
+            bountyTitle: `Implemented feature #${100 + i}`,
+            projectName: "Drips Protocol",
+            projectLogoUrl: null,
+            difficulty: ["BEGINNER", "INTERMEDIATE", "ADVANCED"][i % 3] as "BEGINNER" | "INTERMEDIATE" | "ADVANCED",
+            rewardAmount: 500,
+            rewardCurrency: "USDC",
+            claimedAt: "2023-01-01T00:00:00Z",
+            completedAt: "2024-01-15T12:00:00Z",
+            completionTimeHours: 48,
+            maintainerRating: 5,
+            maintainerFeedback: "Great work!",
+            pointsEarned: 150
+        }));
+    }, [reputation]);
 
     if (isLoading) {
         return (
@@ -33,7 +54,7 @@ export default function ProfilePage() {
                 <AlertCircle className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                 <h1 className="text-2xl font-bold mb-2">Profile Not Found</h1>
                 <p className="text-muted-foreground mb-6">
-                    We couldn't find a reputation profile for this user.
+                    We could not find a reputation profile for this user.
                 </p>
                 <Button asChild variant="outline">
                     <Link href="/">Return Home</Link>
@@ -41,25 +62,6 @@ export default function ProfilePage() {
             </div>
         );
     }
-
-    // Mock history data using the reputation stats (Since we don't have a real history endpoint yet)
-    // In a real app, we would fetch this from a separate endpoint or include it in the reputation data
-    const mockHistory = Array(reputation.stats.totalCompleted).fill(null).map((_, i) => ({
-        id: `bounty-${i}`,
-        bountyId: `b-${i}`,
-        bountyTitle: `Implemented feature #${100 + i}`,
-        projectName: "Drips Protocol",
-        projectLogoUrl: null,
-        difficulty: ["BEGINNER", "INTERMEDIATE", "ADVANCED"][i % 3] as any,
-        rewardAmount: 500,
-        rewardCurrency: "USDC",
-        claimedAt: "2023-01-01T00:00:00Z",
-        completedAt: new Date(Date.now() - i * 86400000 * 5).toISOString(),
-        completionTimeHours: 48,
-        maintainerRating: 5,
-        maintainerFeedback: "Great work!",
-        pointsEarned: 150
-    }));
 
     return (
         <div className="container max-w-6xl mx-auto py-8 px-4">

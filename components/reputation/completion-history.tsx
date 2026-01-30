@@ -1,7 +1,7 @@
 import { BountyCompletionRecord } from "@/types/reputation";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Clock, Coins, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 
