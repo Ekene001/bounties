@@ -7,6 +7,7 @@ import { Trophy, TrendingUp, Award, Coins } from "lucide-react";
 import { TierBadge } from "./tier-badge";
 import { StreakIndicator } from "./streak-indicator";
 import { RankBadge } from "./rank-badge";
+import { Progress } from "@/components/ui/progress";
 
 interface UserRankSidebarProps {
     userId?: string;
@@ -129,6 +130,28 @@ export function UserRankSidebar({ userId }: UserRankSidebarProps) {
                     <span className="text-muted-foreground">Current Streak</span>
                     <StreakIndicator streak={contributor.stats.currentStreak} />
                 </div>
+
+                {/* Progress to Next Tier */}
+                {(() => {
+                    // TODO: remove mock values once API provides them
+                    const currentPoints = contributor.stats.currentTierPoints ?? contributor.totalScore;
+                    // Mock threshold logic for display if missing: next tier is roughly 2x current score or fixed steps
+                    const nextThreshold = contributor.stats.nextTierThreshold ?? (contributor.totalScore * 1.5);
+
+                    if (nextThreshold > 0) {
+                        const progressPercent = Math.min(100, Math.max(0, (currentPoints / nextThreshold) * 100));
+                        return (
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-xs">
+                                    <span className="text-muted-foreground font-medium uppercase">Progress to Next Tier</span>
+                                    <span className="text-white font-mono">{Math.round(progressPercent)}%</span>
+                                </div>
+                                <Progress value={progressPercent} className="h-2" />
+                            </div>
+                        );
+                    }
+                    return null;
+                })()}
 
             </CardContent>
         </Card>

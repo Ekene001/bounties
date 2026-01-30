@@ -18,6 +18,8 @@ export interface ContributorStats {
     averageCompletionTime: number; // in hours
     currentStreak: number; // consecutive days/weeks depending on logic, usually completion streak
     longestStreak: number;
+    nextTierThreshold?: number;
+    currentTierPoints?: number;
 }
 
 export interface LeaderboardContributor {

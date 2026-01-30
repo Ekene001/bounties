@@ -79,13 +79,13 @@ export function LeaderboardTable({
             <Table>
                 <TableHeader>
                     <TableRow className="hover:bg-transparent border-b border-border">
-                        <TableHead className="w-[80px] text-center font-bold text-foreground">RANK</TableHead>
-                        <TableHead className="font-bold text-foreground">CONTRIBUTOR</TableHead>
-                        <TableHead className="hidden md:table-cell font-bold text-foreground">TIER</TableHead>
-                        <TableHead className="text-right font-bold text-foreground">SCORE</TableHead>
-                        <TableHead className="text-right hidden sm:table-cell font-bold text-foreground">COMPLETED</TableHead>
-                        <TableHead className="text-right hidden lg:table-cell font-bold text-foreground">EARNINGS</TableHead>
-                        <TableHead className="text-right font-bold text-foreground">STREAK</TableHead>
+                        <TableHead className="w-[80px] text-center font-bold text-white">RANK</TableHead>
+                        <TableHead className="font-bold text-white">CONTRIBUTOR</TableHead>
+                        <TableHead className="hidden md:table-cell font-bold text-white">TIER</TableHead>
+                        <TableHead className="text-right font-bold text-white">SCORE</TableHead>
+                        <TableHead className="text-right hidden sm:table-cell font-bold text-white">COMPLETED</TableHead>
+                        <TableHead className="text-right hidden lg:table-cell font-bold text-white">EARNINGS</TableHead>
+                        <TableHead className="text-right font-bold text-white">STREAK</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
