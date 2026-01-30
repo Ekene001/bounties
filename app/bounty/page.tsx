@@ -180,7 +180,7 @@ export default function BountiesPage() {
   return (
     <div className="min-h-screen  text-foreground pb-20 relative overflow-hidden">
       {/* Background ambient glow */}
-      <div className="fixed top-0 left-0 w-full h-[500px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none" />
+
 
       <div className="container mx-auto px-4 py-12 relative z-10">
         <header className="mb-10 text-center lg:text-left border-b border-gray-800/50 pb-8">
@@ -231,7 +231,7 @@ export default function BountiesPage() {
                       <Search className="absolute left-3 top-2.5 size-4 text-gray-500 group-focus-within:text-primary transition-colors" />
                       <Input
                         placeholder="Keywords, tags..."
-                        className="pl-9 bg-background/50 text-white border-gray-700 hover:border-gray-600 focus:border-primary/50 transition-colors h-9 text-sm"
+                        className="pl-9 h-9 text-sm"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />

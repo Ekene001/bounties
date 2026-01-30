@@ -11,7 +11,7 @@ export function TierBadge({ tier, className }: TierBadgeProps) {
     return (
         <Badge
             variant="secondary"
-            className={cn("font-medium bg-secondary/20 text-white hover:bg-secondary/70 border-0", className)}
+            className={cn("font-medium bg-secondary/20 text-foreground hover:bg-secondary/70 border-0", className)}
         >
             {tier}
         </Badge>
