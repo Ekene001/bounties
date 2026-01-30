@@ -25,7 +25,7 @@ export default function SignIn() {
         <div className="grid gap-4">
           <Button
             variant="outline"
-            className="w-full gap-2 text-white"
+            className="w-full gap-2"
             onClick={async () => {
               await authClient.signIn.social({
                 provider: "github",

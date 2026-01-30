@@ -247,7 +247,7 @@ export default function BountiesPage() {
                       value={statusFilter}
                       onValueChange={setStatusFilter}
                     >
-                      <SelectTrigger className="w-full border-gray-700 hover:border-gray-600 focus:border-primary/50 h-9 text-white">
+                      <SelectTrigger className="w-full border-gray-700 hover:border-gray-600 focus:border-primary/50 h-9">
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent className="bg-background border-px border-primary/30">
@@ -255,7 +255,7 @@ export default function BountiesPage() {
                           <SelectItem
                             key={status}
                             value={status}
-                            className="capitalize text-white"
+                            className="capitalize"
                           >
                             {status}
                           </SelectItem>
@@ -274,7 +274,7 @@ export default function BountiesPage() {
                     className="w-full"
                   >
                     <AccordionItem value="type" className="border-none">
-                      <AccordionTrigger className="text-xs font-medium text-gray-400 py-2 hover:no-underline hover:text-gray-200">
+                      <AccordionTrigger className="text-xs font-medium  hover:no-underline hover:text-gray-200">
                         BOUNTY TYPE
                       </AccordionTrigger>
                       <AccordionContent>
@@ -307,7 +307,7 @@ export default function BountiesPage() {
                       value="difficulty"
                       className="border-none mt-2"
                     >
-                      <AccordionTrigger className="text-xs font-medium text-gray-400 py-2 hover:no-underline hover:text-gray-200">
+                      <AccordionTrigger className="text-xs font-medium  hover:no-underline hover:text-gray-200">
                         DIFFICULTY
                       </AccordionTrigger>
                       <AccordionContent>
@@ -337,7 +337,7 @@ export default function BountiesPage() {
 
                     {/* Project */}
                     <AccordionItem value="project" className="border-none mt-2">
-                      <AccordionTrigger className="text-xs font-medium text-gray-400 py-2 hover:no-underline hover:text-gray-200">
+                      <AccordionTrigger className="text-xs font-medium  hover:no-underline hover:text-gray-200">
                         PROJECT
                       </AccordionTrigger>
                       <AccordionContent>
@@ -368,7 +368,7 @@ export default function BountiesPage() {
 
                     {/* Tags */}
                     <AccordionItem value="tags" className="border-none mt-2">
-                      <AccordionTrigger className="text-xs font-medium text-gray-400 py-2 hover:no-underline hover:text-gray-200">
+                      <AccordionTrigger className="text-xs font-medium  hover:no-underline hover:text-gray-200">
                         TAGS
                       </AccordionTrigger>
                       <AccordionContent>
@@ -399,7 +399,7 @@ export default function BountiesPage() {
 
                     {/* Reward Range */}
                     <AccordionItem value="reward" className="border-none mt-2">
-                      <AccordionTrigger className="text-xs font-medium text-gray-400 py-2 hover:no-underline hover:text-gray-200">
+                      <AccordionTrigger className="text-xs font-medium  hover:no-underline hover:text-gray-200">
                         REWARD RANGE
                       </AccordionTrigger>
                       <AccordionContent>
