@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { RatingModal } from "../rating/rating-modal"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import type { Bounty } from "@/types/bounty"
@@ -20,8 +21,9 @@ export function BountySidebar({ bounty }: BountySidebarProps) {
   const [loading, setLoading] = useState(false)
   // const router = useRouter()
 
-  // Mock user ID for now - in real app this comes from auth context
+  // Mock user ID and maintainer check for now - in real app this comes from auth context
   const CURRENT_USER_ID = "mock-user-123"
+  const IS_MAINTAINER = true // TODO: Replace with real maintainer check
 
   // const isClaimable = bounty.status === "open"
 
@@ -75,7 +77,61 @@ export function BountySidebar({ bounty }: BountySidebarProps) {
     }
   }
 
+  // Rating modal state
+  const [showRating, setShowRating] = useState(false)
+  const [completed, setCompleted] = useState(false)
+  const [lastRating, setLastRating] = useState<number | null>(null)
+  const [reputationGain, setReputationGain] = useState<number | null>(null)
+  const [hasRated, setHasRated] = useState(false)
+
+  const handleMarkCompleted = async () => {
+    if (!IS_MAINTAINER) {
+      alert('Only maintainers can mark as completed.');
+      return;
+    }
+    setLoading(true)
+    // Simulate completion API call
+    setTimeout(() => {
+      setLoading(false)
+      setCompleted(true)
+      setShowRating(true)
+    }, 1000)
+  }
+
+  const handleSubmitRating = async (rating: number, feedback: string) => {
+    if (hasRated) {
+      alert('You have already rated this contributor.');
+      return;
+    }
+    if (!IS_MAINTAINER) {
+      alert('Only maintainers can rate contributors.');
+      return;
+    }
+    if (!completed) {
+      alert('Bounty must be marked as completed before rating.');
+      return;
+    }
+    // Simulate API call to reputation endpoint and calculate points
+    await new Promise((res) => setTimeout(res, 1000))
+    setLastRating(rating)
+    setReputationGain(rating * 10)
+    setHasRated(true)
+    setShowRating(false)
+    // Notify contributor (mock)
+    toast.success(`You have been rated ${rating} star${rating > 1 ? 's' : ''} and gained +${rating * 10} reputation!`, {
+      description: 'Congratulations on your contribution!'
+    })
+  }
+
   const renderActionButton = () => {
+    if (bounty.status === 'claimed' && IS_MAINTAINER && !completed) {
+      return (
+        <Button onClick={handleMarkCompleted} disabled={loading} className="w-full gap-2 bg-green-600 text-white hover:bg-green-700">
+          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
+          Mark as Completed
+        </Button>
+      )
+    }
     if (bounty.status !== 'open') {
       const labels: Record<string, string> = {
         claimed: 'Already Claimed',
@@ -155,6 +211,23 @@ export function BountySidebar({ bounty }: BountySidebarProps) {
 
   return (
     <div className="sticky top-4 rounded-xl border border-gray-800 bg-background-card p-6 space-y-4">
+      {/* Sidebar UI */}
+      {showRating && !hasRated && (
+        <RatingModal
+          contributor={{ id: bounty.claimedBy || '', name: 'Contributor', reputation: 100 + (reputationGain || 0) }}
+          bounty={{ id: bounty.id, title: bounty.issueTitle || bounty.title }}
+          onSubmit={handleSubmitRating}
+          onClose={() => setShowRating(false)}
+        />
+      )}
+
+      {/* Show rating and reputation gain after rating, visible to all users if available */}
+      {lastRating && reputationGain && (
+        <div className="p-4 mb-4 rounded bg-green-900/60 text-green-200 border border-green-700">
+          <div className="mb-1">{IS_MAINTAINER ? 'You rated the contributor:' : 'Contributor was rated:'} <b>{lastRating} / 5</b> stars</div>
+          <div>Reputation gained: <b>+{reputationGain}</b></div>
+        </div>
+      )}
       <Button asChild className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
         <a href={bounty.githubIssueUrl} target="_blank" rel="noopener noreferrer">
           <Github className="size-4" />

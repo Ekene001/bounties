@@ -72,8 +72,8 @@ Add a dark mode toggle to the application settings page that persists user prefe
     tags: ["ui", "theme", "settings", "dark-mode"],
     status: "claimed",
     claimedBy: "dev_user_123",
-    claimedAt: "2024-01-01T00:00:00Z",
-    claimExpiresAt: "2024-01-15T00:00:00Z", // Expired
+    claimedAt: "2026-01-01T00:00:00Z",
+    claimExpiresAt: "2026-01-15T00:00:00Z",
     createdAt: "2025-01-10T08:00:00Z",
     updatedAt: "2025-01-17T11:00:00Z",
   },
