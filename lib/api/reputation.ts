@@ -1,4 +1,4 @@
-import { get, post } from './client'; // Assumes a generic HTTP client exists based on recent logs
+import { get, post } from './client';
 import {
     ContributorReputation,
     RateContributorInput
