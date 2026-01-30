@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { type UseFormReturn } from "react-hook-form"
+import { type UseFormReturn, type FieldValues } from "react-hook-form"
 
 const ASSETS = [
   { value: "XLM", label: "XLM" },
@@ -28,7 +28,7 @@ const ASSETS = [
 type Asset = (typeof ASSETS)[number]["value"]
 
 interface BudgetInputProps {
-  form: UseFormReturn<any>
+  form: UseFormReturn<FieldValues>
   name: string
   label?: string
   description?: string

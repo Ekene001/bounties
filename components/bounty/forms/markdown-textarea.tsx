@@ -12,10 +12,10 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { type UseFormReturn } from "react-hook-form"
+import { type UseFormReturn, type FieldValues } from "react-hook-form"
 
 interface MarkdownTextareaProps {
-  form: UseFormReturn<any>
+  form: UseFormReturn<FieldValues>
   name: string
   label?: string
   description?: string

@@ -1,7 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { useFieldArray, type UseFormReturn } from "react-hook-form"
+import {
+  useFieldArray,
+  type UseFormReturn,
+  type FieldValues,
+} from "react-hook-form"
 import { Plus, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -17,7 +21,7 @@ import {
 } from "@/components/ui/form"
 
 interface MilestoneBuilderProps {
-  form: UseFormReturn<any>
+  form: UseFormReturn<FieldValues>
   name: string
   maxMilestones?: number
 }
@@ -138,9 +142,10 @@ export function MilestoneBuilder({
                         min={1}
                         max={100}
                         placeholder="25"
-                        onChange={(e) =>
-                          field.onChange(parseInt(e.target.value) || 0)
-                        }
+                        onChange={(e) => {
+                          const parsed = parseInt(e.target.value)
+                          field.onChange(Number.isNaN(parsed) ? undefined : parsed)
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
