@@ -12,14 +12,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export default function WalletPage() {
     return (
         <div className="container mx-auto max-w-6xl px-4 py-8 space-y-8">
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 text-center lg:text-left">
                 <h1 className="text-3xl font-bold tracking-tight">Wallet</h1>
                 <p className="text-muted-foreground">
                     Manage your earnings, assets, and withdrawals.
                 </p>
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-3">
+            <div className="grid gap-8 lg:grid-cols-3 justify-items-center lg:justify-items-stretch">
                 <div className="lg:col-span-2 space-y-8">
                     <BalanceCard walletInfo={mockWalletWithAssets} />
 
