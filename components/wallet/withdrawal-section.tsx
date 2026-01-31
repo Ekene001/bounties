@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { WalletInfo } from "@/types/wallet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Building, Plus, ArrowRight, History, Info } from "lucide-react";
+import { Building, Plus, ArrowRight, History, Info, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LimitsDisplay } from "@/components/compliance/limits-display";
+import { TermsDialog } from "@/components/compliance/terms-dialog";
+import { TierUpgradeDialog } from "@/components/compliance/tier-upgrade-dialog";
+import { HoldMessage } from "@/components/compliance/hold-message";
+import { useComplianceStatus } from "@/hooks/use-compliance";
+import { useValidateWithdrawal, useSubmitWithdrawal } from "@/hooks/use-withdrawal";
 
 interface WithdrawalSectionProps {
     walletInfo: WalletInfo;
@@ -15,17 +22,52 @@ interface WithdrawalSectionProps {
 
 export function WithdrawalSection({ walletInfo }: WithdrawalSectionProps) {
     const [amount, setAmount] = useState("");
+    const [showTermsDialog, setShowTermsDialog] = useState(false);
+    const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+    const [validationError, setValidationError] = useState<string | null>(null);
 
-    // Mock bank accounts
+    const { data: complianceData } = useComplianceStatus();
+    const validateMutation = useValidateWithdrawal();
+    const submitMutation = useSubmitWithdrawal();
+
     const bankAccounts = [
         { id: '1', name: 'Chase Bank', last4: '4242', isPrimary: true },
     ];
 
     const parsedAmount = parseFloat(amount);
-    const isValidAmount = !isNaN(parsedAmount) &&
-        isFinite(parsedAmount) &&
-        parsedAmount >= 10 &&
-        parsedAmount <= walletInfo.balance;
+    const isValidAmount = !isNaN(parsedAmount) && isFinite(parsedAmount) && parsedAmount >= 10;
+
+    useEffect(() => {
+        if (isValidAmount && parsedAmount <= walletInfo.balance) {
+            validateMutation.mutate(parsedAmount, {
+                onSuccess: (result) => {
+                    if (!result.valid) {
+                        setValidationError(result.errors[0] || 'Validation failed');
+                    } else {
+                        setValidationError(null);
+                    }
+                },
+            });
+        } else {
+            setValidationError(null);
+        }
+    }, [parsedAmount]);
+
+    const handleWithdraw = async () => {
+        if (!isValidAmount || !complianceData) return;
+
+        try {
+            await submitMutation.mutateAsync({
+                amount: parsedAmount,
+                currency: 'USD',
+                destinationId: bankAccounts[0].id,
+            });
+            alert('Withdrawal submitted successfully!');
+            setAmount('');
+        } catch (error: any) {
+            alert(error.message || 'Withdrawal failed');
+        }
+    };
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat("en-US", {
@@ -34,8 +76,40 @@ export function WithdrawalSection({ walletInfo }: WithdrawalSectionProps) {
         }).format(amount);
     };
 
+    const canWithdraw = isValidAmount &&
+        parsedAmount <= walletInfo.balance &&
+        !validationError &&
+        complianceData?.compliance.holdState === 'NONE' &&
+        !complianceData?.termsStatus.requiresAcceptance;
+
     return (
         <div className="space-y-6">
+            {complianceData && (
+                <>
+                    <HoldMessage
+                        holdState={complianceData.compliance.holdState}
+                        reason={complianceData.compliance.holdReason}
+                    />
+
+                    <TermsDialog
+                        open={showTermsDialog}
+                        onOpenChange={setShowTermsDialog}
+                        onAccepted={() => {
+                            setShowTermsDialog(false);
+                        }}
+                    />
+
+                    {complianceData.nextTier && (
+                        <TierUpgradeDialog
+                            open={showUpgradeDialog}
+                            onOpenChange={setShowUpgradeDialog}
+                            currentTier={complianceData.compliance.currentTier}
+                            targetTier={complianceData.nextTier}
+                        />
+                    )}
+                </>
+            )}
+
             <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-4">
                     <h3 className="font-semibold text-lg">Off-Ramp to Fiat</h3>
@@ -68,6 +142,12 @@ export function WithdrawalSection({ walletInfo }: WithdrawalSectionProps) {
                                 <span>Balance: {formatCurrency(walletInfo.balance)}</span>
                                 <span>Min: $10.00</span>
                             </div>
+                            {validationError && (
+                                <Alert variant="destructive" className="py-2">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <AlertDescription className="text-xs">{validationError}</AlertDescription>
+                                </Alert>
+                            )}
                         </div>
 
                         <div className="space-y-2">
@@ -110,16 +190,22 @@ export function WithdrawalSection({ walletInfo }: WithdrawalSectionProps) {
                             </div>
                         </div>
 
+                        {complianceData?.termsStatus.requiresAcceptance && (
+                            <Button
+                                className="w-full h-12 text-md font-semibold"
+                                variant="secondary"
+                                onClick={() => setShowTermsDialog(true)}
+                            >
+                                Accept Terms & Conditions
+                            </Button>
+                        )}
+
                         <Button
                             className="w-full h-12 text-md font-semibold"
-                            disabled={!isValidAmount}
-                            onClick={() => {
-                                if (isValidAmount) {
-                                    // Handle withdrawal
-                                }
-                            }}
+                            disabled={!canWithdraw || submitMutation.isPending}
+                            onClick={handleWithdraw}
                         >
-                            Complete Withdrawal
+                            {submitMutation.isPending ? 'Processing...' : 'Complete Withdrawal'}
                             <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                     </div>
@@ -148,22 +234,7 @@ export function WithdrawalSection({ walletInfo }: WithdrawalSectionProps) {
                                 <Info className="h-4 w-4 text-muted-foreground" />
                                 <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Limits & Settings</h4>
                             </div>
-                            <div className="grid gap-3">
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Daily Limit</span>
-                                    <span className="font-medium">$5,000 / $5,000</span>
-                                </div>
-                                <div className="w-full bg-muted rounded-full h-1.5">
-                                    <div className="bg-primary h-1.5 rounded-full w-[0%]"></div>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Monthly Limit</span>
-                                    <span className="font-medium">$50,000 / $50,000</span>
-                                </div>
-                                <div className="w-full bg-muted rounded-full h-1.5">
-                                    <div className="bg-primary h-1.5 rounded-full w-[0%]"></div>
-                                </div>
-                            </div>
+                            <LimitsDisplay onUpgradeClick={() => setShowUpgradeDialog(true)} />
                         </div>
                     </div>
                 </div>

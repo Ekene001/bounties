@@ -36,3 +36,18 @@ export const authKeys = {
     all: ['auth'] as const,
     session: () => [...authKeys.all, 'session'] as const,
 };
+
+export const complianceKeys = {
+    all: ['compliance'] as const,
+    status: () => [...complianceKeys.all, 'status'] as const,
+};
+
+export const termsKeys = {
+    all: ['terms'] as const,
+    current: () => [...termsKeys.all, 'current'] as const,
+};
+
+export const withdrawalKeys = {
+    all: ['withdrawal'] as const,
+    history: () => [...withdrawalKeys.all, 'history'] as const,
+};
