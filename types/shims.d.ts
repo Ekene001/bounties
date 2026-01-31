@@ -5,8 +5,16 @@ declare module "@tabler/icons-react" {
 }
 
 declare module "motion/react" {
+  import { RefObject } from 'react'
+
   export const motion: unknown
   export const AnimatePresence: unknown
-  export const useScroll: unknown
-  export const useMotionValueEvent: unknown
+
+  export function useScroll(options?: { target?: RefObject<Element | null>; offset?: string[] }): { scrollY: { get(): number } }
+
+  export function useMotionValueEvent<T = number>(
+    motionValue: { get(): T },
+    eventName: string,
+    handler: (latest: T) => void
+  ): void
 }

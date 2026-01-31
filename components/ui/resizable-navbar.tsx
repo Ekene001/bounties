@@ -51,7 +51,8 @@ interface MobileNavMenuProps {
 export const Navbar = ({ children, className }: NavbarProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll({
-    target: ref,
+    // Cast ref to a nullable Element ref to satisfy motion's typings at build time
+    target: ref as unknown as React.RefObject<Element | null>,
     offset: ["start start", "end start"],
   });
   const [visible, setVisible] = useState<boolean>(false);
