@@ -20,7 +20,7 @@ export default function ProfilePage() {
 
     const mockHistory = useMemo(() => {
         if (!reputation) return [];
-        const count = Math.min(reputation.stats.totalCompleted, MAX_MOCK_HISTORY);
+        const count = Math.min(reputation.stats.totalCompleted ?? 0, MAX_MOCK_HISTORY);
         return Array(count).fill(null).map((_, i) => ({
             id: `bounty-${i}`,
             bountyId: `b-${i}`,
