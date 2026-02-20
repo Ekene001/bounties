@@ -21,7 +21,7 @@ export default async function BountyDetailPage({ params }: Props) {
           className="flex items-center gap-1.5 text-xs text-gray-500 mb-8"
         >
           <Link
-            href="/bounties"
+            href="/bounty"
             className="hover:text-gray-300 transition-colors flex items-center gap-1"
           >
             <ArrowLeft className="size-3" /> Bounties

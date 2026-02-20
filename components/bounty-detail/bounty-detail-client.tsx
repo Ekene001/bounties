@@ -37,7 +37,7 @@ export function BountyDetailClient({ bountyId }: { bountyId: string }) {
         <Button
           variant="outline"
           className="border-gray-700 hover:bg-gray-800 mt-2"
-          onClick={() => router.push("/bounties")}
+          onClick={() => router.push("/bounty")}
         >
           <ArrowLeft className="size-4 mr-2" />
           Back to bounties
@@ -59,7 +59,7 @@ export function BountyDetailClient({ bountyId }: { bountyId: string }) {
         <Button
           variant="outline"
           className="border-gray-700 hover:bg-gray-800 mt-2"
-          onClick={() => router.push("/bounties")}
+          onClick={() => router.push("/bounty")}
         >
           <ArrowLeft className="size-4 mr-2" />
           Back to bounties
