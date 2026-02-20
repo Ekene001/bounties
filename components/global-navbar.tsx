@@ -55,6 +55,16 @@ export function GlobalNavbar() {
               Leaderboard
             </Link>
             <Link
+              href="/transparency"
+              className={`transition-colors hover:text-foreground/80 ${
+                pathname.startsWith("/transparency")
+                ? "text-foreground"
+                : "text-foreground/60"
+              }`}
+            >
+              Transparency
+            </Link>
+            <Link
               href="/wallet"
               className={`transition-colors hover:text-foreground/80 ${pathname.startsWith("/wallet")
                   ? "text-foreground"
