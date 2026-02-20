@@ -17,6 +17,13 @@ import { VerificationService } from "@/lib/services/verification";
 import { useUpgradeTier } from "@/hooks/use-compliance";
 import { DocumentUpload } from "./document-upload";
 
+const TIER_ORDER: Record<KYCTier, number> = {
+  UNVERIFIED: 0,
+  BASIC: 1,
+  VERIFIED: 2,
+  ENHANCED: 3,
+};
+
 interface TierUpgradeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -34,6 +41,7 @@ const formatCurrency = (amount: number) =>
 export function TierUpgradeDialog({
   open,
   onOpenChange,
+  currentTier,
   targetTier,
 }: TierUpgradeDialogProps) {
   const [step, setStep] = useState<"info" | "documents">("info");
@@ -45,7 +53,10 @@ export function TierUpgradeDialog({
   const tierConfig = ComplianceService.getTierConfig(targetTier);
   const requiredDocs = VerificationService.getRequiredDocuments(targetTier);
 
+  const isUpgradeValid = TIER_ORDER[targetTier] > TIER_ORDER[currentTier];
+
   const handleUpgrade = async () => {
+    if (!isUpgradeValid) return;
     try {
       const request = await upgradeMutation.mutateAsync(targetTier);
       setRequestId(request.id);
@@ -162,7 +173,7 @@ export function TierUpgradeDialog({
               </Button>
               <Button
                 onClick={handleUpgrade}
-                disabled={upgradeMutation.isPending}
+                disabled={upgradeMutation.isPending || !isUpgradeValid}
               >
                 {upgradeMutation.isPending
                   ? "Requesting..."
@@ -183,6 +194,11 @@ export function TierUpgradeDialog({
             </>
           )}
         </DialogFooter>
+        {!isUpgradeValid && step === "info" && (
+          <p className="text-xs text-destructive text-center pb-4">
+            You are already at this tier or higher.
+          </p>
+        )}
       </DialogContent>
     </Dialog>
   );

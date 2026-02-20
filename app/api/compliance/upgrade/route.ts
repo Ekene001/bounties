@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/server-auth";
 import { VerificationService } from "@/lib/services/verification";
+import { KYCTier } from "@/types/compliance";
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,6 +11,21 @@ export async function POST(request: NextRequest) {
     }
 
     const { targetTier } = await request.json();
+
+    const VALID_TIERS: KYCTier[] = [
+      "UNVERIFIED",
+      "BASIC",
+      "VERIFIED",
+      "ENHANCED",
+    ];
+
+    // Validate targetTier
+    if (!targetTier || !VALID_TIERS.includes(targetTier as KYCTier)) {
+      return NextResponse.json(
+        { error: "Invalid or missing targetTier" },
+        { status: 400 },
+      );
+    }
 
     const verificationRequest =
       await VerificationService.createVerificationRequest(user.id, targetTier);
@@ -27,8 +43,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function GET(_request: NextRequest) {
+export async function GET() {
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -37,10 +52,10 @@ export async function GET(_request: NextRequest) {
 
     const status = await VerificationService.getVerificationStatus(user.id);
     return NextResponse.json(status);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (_error) {
+  } catch (error) {
+    console.error("Failed to fetch verification status:", error);
     return NextResponse.json(
-      { error: "Failed to fetch verification status" },
+      { error: "Failed to fetch status" },
       { status: 500 },
     );
   }

@@ -23,9 +23,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(withdrawal);
   } catch (error) {
     console.error("Error submitting withdrawal:", error);
-    return NextResponse.json(
-      { error: (error as Error).message || "Withdrawal failed" },
-      { status: 400 },
-    );
+
+    let message = "Withdrawal failed";
+    let status = 400;
+
+    if (error instanceof Error) {
+      message = error.message;
+      const err = error as Error & { status?: number; statusCode?: number };
+      status =
+        err.status ||
+        err.statusCode ||
+        (error.name === "ValidationError" || error.name === "BadRequestError"
+          ? 400
+          : 500);
+    } else {
+      message = String(error);
+      status = 500;
+    }
+
+    return NextResponse.json({ error: message }, { status });
   }
 }

@@ -39,19 +39,28 @@ const RESTRICTED: RestrictedJurisdiction[] = [
 ];
 
 export class GeoRestrictionService {
-  static async checkLocation(ip: string): Promise<UserLocation> {
+  static async checkLocation(
+    ip: string,
+    override?: Partial<UserLocation>,
+  ): Promise<UserLocation> {
     // In production: call ipapi.co, MaxMind, or ip-api.com
     // Example: const response = await fetch(`https://ipapi.co/${ip}/json/`)
 
     const mockLocation: UserLocation = {
       ip,
-      countryCode: "US",
-      countryName: "United States",
-      regionCode: "CA",
-      regionName: "California",
-      city: "San Francisco",
-      isVPN: await this.detectVPN(ip),
-      isProxy: await this.detectProxy(ip),
+      countryCode: override?.countryCode || "US",
+      countryName: override?.countryName || "United States",
+      regionCode: override?.regionCode || "CA",
+      regionName: override?.regionName || "California",
+      city: override?.city || "San Francisco",
+      isVPN:
+        override?.isVPN !== undefined
+          ? override.isVPN
+          : await this.detectVPN(ip),
+      isProxy:
+        override?.isProxy !== undefined
+          ? override.isProxy
+          : await this.detectProxy(ip),
       isRestricted: false,
     };
 
@@ -80,14 +89,14 @@ export class GeoRestrictionService {
   }
 
   static async detectVPN(ip: string): Promise<boolean> {
-    // In production: use VPN detection API like:
-    // - IPHub: https://iphub.info/
-    // - IP2Proxy: https://www.ip2location.com/
-    // - VPNApi: https://vpnapi.io/
+    /**
+     * NOTE: This is a placeholder mock for VPN detection.
+     * TODO: Integrate with a real VPN detection service like IPHub, IP2Proxy, or VPNApi.
+     */
 
-    // Mock: check if IP is in common VPN ranges
-    const vpnRanges = ["10.", "172.16.", "192.168."];
-    return vpnRanges.some((range) => ip.startsWith(range));
+    // Mock: check against a small list of "VPN-like" public IPs (placeholder logic)
+    const vpnIps = ["8.8.8.8", "1.1.1.1"];
+    return vpnIps.includes(ip);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

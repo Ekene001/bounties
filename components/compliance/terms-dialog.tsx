@@ -49,10 +49,9 @@ export function TermsDialog({
   };
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLDivElement;
-    const bottom =
-      target.scrollHeight - target.scrollTop <= target.clientHeight + 50;
-    if (bottom) setScrolled(true);
+    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
+    const isAtBottom = scrollHeight - scrollTop <= clientHeight + 50;
+    if (isAtBottom) setScrolled(true);
   };
 
   return (

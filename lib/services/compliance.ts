@@ -81,6 +81,10 @@ export class ComplianceService {
 
   /**
    * Get user's current compliance status
+   *
+   * NOTE: This returns a shallow copy of the cached object to allow
+   * mutating methods (trackWithdrawal, resetExpiredWindows, etc.)
+   * to persist changes to the mock database.
    */
   static async getUserCompliance(userId: string): Promise<UserCompliance> {
     await this.simulateDelay();
@@ -199,7 +203,8 @@ export class ComplianceService {
   }
 
   /**
-   * Check if withdrawal would exceed any limits
+   * Check if withdrawal would exceed any limits.
+   * NOTE: This does not mutate state. Callers must ensure windows are reset if needed.
    */
   static async validateWithdrawalAmount(
     userId: string,
@@ -209,7 +214,6 @@ export class ComplianceService {
     exceededLimit?: "daily" | "weekly" | "monthly" | "perTransaction";
   }> {
     const compliance = await this.getUserCompliance(userId);
-    await this.resetExpiredWindows(userId, compliance);
 
     const { limits, usage } = compliance;
 
@@ -317,17 +321,24 @@ export class ComplianceService {
   }
 
   /**
-   * Get tier configuration
+   * Get tier configuration (returns a deep copy)
    */
   static getTierConfig(tier: KYCTier): KYCTierConfig {
-    return { ...this.TIER_CONFIGS[tier] };
+    const config = this.TIER_CONFIGS[tier];
+    return {
+      ...config,
+      limits: { ...config.limits },
+      requirements: [...config.requirements],
+    };
   }
 
   /**
-   * Get all tier configurations
+   * Get all tier configurations (returns deep copies)
    */
   static getAllTierConfigs(): KYCTierConfig[] {
-    return Object.values(this.TIER_CONFIGS);
+    return (Object.keys(this.TIER_CONFIGS) as KYCTier[]).map((tier) =>
+      this.getTierConfig(tier),
+    );
   }
 
   /**

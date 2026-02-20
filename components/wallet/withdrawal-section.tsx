@@ -44,21 +44,24 @@ export function WithdrawalSection({ walletInfo }: WithdrawalSectionProps) {
     { id: "1", name: "Chase Bank", last4: "4242", isPrimary: true },
   ];
 
-  const parsedAmount = parseFloat(amount);
-  const isValidAmount =
-    !isNaN(parsedAmount) && isFinite(parsedAmount) && parsedAmount >= 10;
+  const parsedAmount = isNaN(parseFloat(amount)) ? 0 : parseFloat(amount);
+  const isValidAmount = isFinite(parsedAmount) && parsedAmount >= 10;
 
   const syncValidationError = useMemo(() => {
-    if (!amount) return null;
+    if (!amount || Number.isNaN(parsedAmount)) return null;
     if (!isValidAmount) return "Minimum withdrawal is $10.00";
     if (parsedAmount > walletInfo.balance) return "Insufficient balance";
     return null;
   }, [amount, isValidAmount, parsedAmount, walletInfo.balance]);
 
   useEffect(() => {
+    // If we have a sync error, we don't need to run async validation.
+    // The UI will prefer syncValidationError automatically.
     if (syncValidationError) {
       return;
     }
+
+    if (parsedAmount <= 0) return;
 
     const debounceTimer = setTimeout(() => {
       validateMutation.mutate(parsedAmount, {
@@ -76,7 +79,7 @@ export function WithdrawalSection({ walletInfo }: WithdrawalSectionProps) {
   }, [syncValidationError, validateMutation, parsedAmount]);
 
   const handleWithdraw = async () => {
-    if (!isValidAmount || !complianceData) return;
+    if (!canWithdraw || !complianceData) return;
 
     try {
       await submitMutation.mutateAsync({
@@ -98,11 +101,16 @@ export function WithdrawalSection({ walletInfo }: WithdrawalSectionProps) {
     }).format(amount);
   };
 
+  const isAmountValidated =
+    validateMutation.isSuccess && validateMutation.variables === parsedAmount;
+
   const canWithdraw =
     isValidAmount &&
     parsedAmount <= walletInfo.balance &&
     !validationError &&
     !syncValidationError &&
+    !validateMutation.isPending &&
+    isAmountValidated &&
     complianceData?.compliance.holdState === "NONE" &&
     !complianceData?.termsStatus.requiresAcceptance;
 
@@ -169,11 +177,11 @@ export function WithdrawalSection({ walletInfo }: WithdrawalSectionProps) {
                 <span>Balance: {formatCurrency(walletInfo.balance)}</span>
                 <span>Min: $10.00</span>
               </div>
-              {(validationError || syncValidationError) && (
+              {(syncValidationError || validationError) && (
                 <Alert variant="destructive" className="py-2">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription className="text-xs">
-                    {validationError || syncValidationError}
+                    {syncValidationError || validationError}
                   </AlertDescription>
                 </Alert>
               )}

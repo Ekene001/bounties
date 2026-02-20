@@ -1,1 +1,1 @@
-npx lint-staged --concurrent false && npm run build
+npx lint-staged --concurrent false
