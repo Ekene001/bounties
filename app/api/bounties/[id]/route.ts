@@ -6,8 +6,10 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  // Simulate network delay (matches list endpoint)
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  // Simulate network delay in development only
+  if (process.env.NODE_ENV === "development") {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
 
   const { id } = await params;
   const bounty = getBountyById(id);

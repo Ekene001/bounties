@@ -15,10 +15,14 @@ export function SidebarCTA({ bounty }: { bounty: Bounty }) {
   const claimCfg = CLAIMING_MODEL_CONFIG[bounty.claimingModel];
   const ClaimIcon = claimCfg.icon;
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // clipboard write failed (e.g. non-HTTPS, permission denied)
+    }
   };
 
   const ctaLabel = () => {
@@ -98,7 +102,10 @@ export function SidebarCTA({ bounty }: { bounty: Bounty }) {
         className="w-full h-11 font-bold tracking-wide"
         disabled={!canAct}
         size="lg"
-        onClick={() => canAct && window.open(bounty.githubIssueUrl, "_blank")}
+        onClick={() =>
+          canAct &&
+          window.open(bounty.githubIssueUrl, "_blank", "noopener,noreferrer")
+        }
       >
         {ctaLabel()}
       </Button>
@@ -163,7 +170,7 @@ export function ClaimModelInfo({
 
 export function MobileCTA({ bounty }: { bounty: Bounty }) {
   const canAct = bounty.status === "open";
-  const claimCfg = CLAIMING_MODEL_CONFIG[bounty.claimingModel];
+  // const claimCfg = CLAIMING_MODEL_CONFIG[bounty.claimingModel];
 
   const label = () => {
     if (!canAct)
@@ -186,7 +193,10 @@ export function MobileCTA({ bounty }: { bounty: Bounty }) {
         className="w-full h-11 font-bold tracking-wide"
         disabled={!canAct}
         size="lg"
-        onClick={() => canAct && window.open(bounty.githubIssueUrl, "_blank")}
+        onClick={() =>
+          canAct &&
+          window.open(bounty.githubIssueUrl, "_blank", "noopener,noreferrer")
+        }
       >
         {label()}
       </Button>

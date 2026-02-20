@@ -16,7 +16,10 @@ export default async function BountyDetailPage({ params }: Props) {
 
       <div className="container mx-auto px-4 py-10 relative z-10">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-xs text-gray-500 mb-8">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-1.5 text-xs text-gray-500 mb-8"
+        >
           <Link
             href="/bounties"
             className="hover:text-gray-300 transition-colors flex items-center gap-1"
@@ -24,7 +27,9 @@ export default async function BountyDetailPage({ params }: Props) {
             <ArrowLeft className="size-3" /> Bounties
           </Link>
           <ChevronRight className="size-3" />
-          <span className="text-gray-400">Detail</span>
+          <span aria-current="page" className="text-gray-400">
+            Detail
+          </span>
         </nav>
 
         <BountyDetailClient bountyId={bountyId} />

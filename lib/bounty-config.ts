@@ -1,3 +1,4 @@
+import type { ElementType } from "react";
 import { User, Users, Trophy } from "lucide-react";
 import type { Bounty } from "@/lib/api";
 
@@ -43,7 +44,7 @@ export const DIFFICULTY_CONFIG: Record<
 
 export const CLAIMING_MODEL_CONFIG: Record<
   Bounty["claimingModel"],
-  { label: string; description: string; icon: React.ElementType }
+  { label: string; description: string; icon: ElementType }
 > = {
   "single-claim": {
     label: "Single Claim",
