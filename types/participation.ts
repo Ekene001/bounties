@@ -27,6 +27,19 @@ export interface Submission {
     feedback?: string
 }
 
+export type ReviewStatus = 'pending' | 'approved' | 'rejected' | 'revision_requested'
+
+export type ReviewSubmission = {
+    submissionId: string
+    contributor: {
+        username: string
+        avatarUrl?: string
+    }
+    milestoneId?: string
+    submittedAt: string
+    status: ReviewStatus
+}
+
 export type MilestoneStatus = 'active' | 'completed' | 'advanced'
 
 export interface MilestoneParticipation {
