@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { BountyStore } from "@/lib/store";
 import { Submission } from "@/types/participation";
 import { submissionFormSchema } from "@/components/bounty/forms/schemas";
+import { getCurrentUser } from "@/lib/server-auth";
 
 const generateId = () => crypto.randomUUID();
 
@@ -12,15 +13,14 @@ export async function POST(
   const { id: bountyId } = await params;
 
   try {
-    const body = await request.json();
-    const { contributorId, ...formData } = body;
-
-    if (!contributorId) {
-      return NextResponse.json(
-        { error: "Missing contributor ID" },
-        { status: 400 },
-      );
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    const contributorId = user.id;
+
+    const body = await request.json();
+    const { contributorId: _clientContributorId, ...formData } = body;
 
     const parsed = submissionFormSchema.safeParse(formData);
     if (!parsed.success) {

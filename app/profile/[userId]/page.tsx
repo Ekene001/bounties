@@ -1,6 +1,9 @@
 "use client";
 
-import { useContributorReputation } from "@/hooks/use-reputation";
+import {
+  useContributorReputation,
+  useCompletionHistory,
+} from "@/hooks/use-reputation";
 import { useBounties } from "@/hooks/use-bounties";
 import { ReputationCard } from "@/components/reputation/reputation-card";
 import { CompletionHistory } from "@/components/reputation/completion-history";
@@ -22,37 +25,10 @@ export default function ProfilePage() {
     error,
   } = useContributorReputation(userId);
   const { data: bountyResponse } = useBounties();
+  const { data: completionData, isLoading: completionLoading } =
+    useCompletionHistory(userId);
 
-  const MAX_MOCK_HISTORY = 50;
-
-  const mockHistory = useMemo(() => {
-    if (!reputation) return [];
-    const count = Math.min(
-      reputation.stats.totalCompleted ?? 0,
-      MAX_MOCK_HISTORY,
-    );
-    return Array(count)
-      .fill(null)
-      .map((_, i) => ({
-        id: `bounty-${i}`,
-        bountyId: `b-${i}`,
-        bountyTitle: `Implemented feature #${100 + i}`,
-        projectName: "Drips Protocol",
-        projectLogoUrl: null,
-        difficulty: ["BEGINNER", "INTERMEDIATE", "ADVANCED"][i % 3] as
-          | "BEGINNER"
-          | "INTERMEDIATE"
-          | "ADVANCED",
-        rewardAmount: 500,
-        rewardCurrency: "USDC",
-        claimedAt: "2023-01-01T00:00:00Z",
-        completedAt: "2024-01-15T12:00:00Z",
-        completionTimeHours: 48,
-        maintainerRating: 5,
-        maintainerFeedback: "Great work!",
-        pointsEarned: 150,
-      }));
-  }, [reputation]);
+  const completionRecords = completionData?.records ?? [];
 
   const myClaims = useMemo<MyClaim[]>(() => {
     const bounties = bountyResponse?.data ?? [];
@@ -70,7 +46,7 @@ export default function ProfilePage() {
             !Number.isNaN(claimExpiry.getTime()) &&
             claimExpiry < new Date()
           ) {
-            status = "in-review";
+            status = "expired";
           }
         }
 
@@ -194,10 +170,18 @@ export default function ProfilePage() {
 
             <TabsContent value="history" className="mt-6">
               <h2 className="text-xl font-bold mb-4">Activity History</h2>
-              <CompletionHistory
-                records={mockHistory}
-                description={`Showing the last ${mockHistory.length} completed bounties.`}
-              />
+              {completionLoading ? (
+                <Skeleton className="h-[400px] w-full" />
+              ) : (
+                <CompletionHistory
+                  records={completionRecords}
+                  description={
+                    completionRecords.length > 0
+                      ? `Showing the last ${completionRecords.length} completed bounties.`
+                      : undefined
+                  }
+                />
+              )}
             </TabsContent>
 
             <TabsContent value="analytics" className="mt-6">

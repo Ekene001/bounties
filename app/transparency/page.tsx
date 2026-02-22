@@ -1,5 +1,6 @@
 "use client";
 
+import type { ElementType } from "react";
 import { usePlatformStats, useRecentPayouts } from "@/hooks/use-transparency";
 import {
   AlertCircle,
@@ -26,7 +27,7 @@ function StatCard({
 }: {
   title: string;
   value: string;
-  icon: React.ElementType;
+  icon: ElementType;
   isLoading: boolean;
 }) {
   return (
@@ -100,22 +101,38 @@ export default function TransparencyPage() {
   const statCards = [
     {
       title: "Total Funds Distributed",
-      value: stats ? `$${stats.totalFundsDistributed.toLocaleString()}` : "$0",
+      value: statsError
+        ? "—"
+        : stats
+          ? `$${stats.totalFundsDistributed.toLocaleString()}`
+          : "$0",
       icon: DollarSign,
     },
     {
       title: "Contributors Paid",
-      value: stats ? stats.totalContributorsPaid.toLocaleString() : "0",
+      value: statsError
+        ? "—"
+        : stats
+          ? stats.totalContributorsPaid.toLocaleString()
+          : "0",
       icon: Users,
     },
     {
       title: "Projects Funded",
-      value: stats ? stats.totalProjectsFunded.toLocaleString() : "0",
+      value: statsError
+        ? "—"
+        : stats
+          ? stats.totalProjectsFunded.toLocaleString()
+          : "0",
       icon: FolderOpen,
     },
     {
       title: "Avg. Payout Time",
-      value: stats ? `${stats.averagePayoutTimeDays} days` : "0 days",
+      value: statsError
+        ? "—"
+        : stats
+          ? `${stats.averagePayoutTimeDays} days`
+          : "0 days",
       icon: Clock,
     },
   ];
@@ -157,23 +174,25 @@ export default function TransparencyPage() {
           </Alert>
         )}
 
-        {/* Stats Grid */}
-        <section>
-          <h2 className="text-xl font-semibold text-foreground mb-4">
-            Platform Overview
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {statCards.map((card) => (
-              <StatCard
-                key={card.title}
-                title={card.title}
-                value={card.value}
-                icon={card.icon}
-                isLoading={statsLoading}
-              />
-            ))}
-          </div>
-        </section>
+        {/* Stats Grid - hidden when error so zeros aren't shown */}
+        {!statsError && (
+          <section>
+            <h2 className="text-xl font-semibold text-foreground mb-4">
+              Platform Overview
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {statCards.map((card) => (
+                <StatCard
+                  key={card.title}
+                  title={card.title}
+                  value={card.value}
+                  icon={card.icon}
+                  isLoading={statsLoading}
+                />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Recent Payouts */}
         <section>

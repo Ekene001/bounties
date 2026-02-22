@@ -29,6 +29,7 @@ export const CLAIM_SECTIONS: { title: string; statuses: string[] }[] = [
     statuses: ["in-review", "in review", "review", "pending", "under-review"],
   },
   { title: "Completed", statuses: ["completed", "closed", "accepted", "done"] },
+  { title: "Expired", statuses: ["expired", "forfeited", "overdue"] },
 ];
 
 export function normalizeStatus(status: string) {
