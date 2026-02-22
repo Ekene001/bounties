@@ -39,7 +39,7 @@ export default function ProfilePage() {
     isLoading,
     error,
   } = useContributorReputation(userId);
-  const { data: bountyResponse } = useBounties();
+  const { data: bountyResponse, isLoading: isBountiesLoading } = useBounties();
 
   const MAX_MOCK_HISTORY = 50;
 
@@ -87,13 +87,9 @@ export default function ProfilePage() {
 
       if (status === "completed") {
         totalEarned += amount;
-        if (bounty.claimExpiresAt) {
-          payoutHistory.push({
-            amount,
-            date: bounty.claimExpiresAt,
-            status: "completed",
-          });
-        }
+        // Use claimExpiresAt as a proxy for payout date, fall back to createdAt.
+        const payoutDate = bounty.claimExpiresAt ?? bounty.createdAt;
+        payoutHistory.push({ amount, date: payoutDate, status: "completed" });
       } else if (status === "in-review") {
         pendingAmount += amount;
         // claimExpiresAt is guaranteed when status is "in-review"
@@ -110,6 +106,7 @@ export default function ProfilePage() {
     // If no real claim data, fall back to reputation stats
     if (userBounties.length === 0 && reputation) {
       totalEarned = reputation.stats.totalEarnings;
+      // pendingAmount has no reputation-stats equivalent; intentionally left as 0
     }
 
     return { totalEarned, pendingAmount, currency, payoutHistory };
@@ -128,7 +125,7 @@ export default function ProfilePage() {
       }));
   }, [bountyResponse?.data, userId]);
 
-  if (isLoading) {
+  if (isLoading || isBountiesLoading) {
     return (
       <div className="container mx-auto py-8">
         <Skeleton className="h-10 w-32 mb-8" />
