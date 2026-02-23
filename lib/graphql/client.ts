@@ -45,7 +45,7 @@ export const graphQLClient = new GraphQLClient(url);
 // A custom fetcher for @graphql-codegen/typescript-react-query
 export const fetcher = <
   TData,
-  TVariables extends Record<string, unknown> = Record<string, unknown>,
+  TVariables extends object = Record<string, unknown>,
 >(
   query: string,
   variables?: TVariables,
@@ -58,15 +58,21 @@ export const fetcher = <
     }
 
     try {
-      return await graphQLClient.request<TData>(query, variables, headers);
+      return await (
+        graphQLClient.request as unknown as (
+          q: string,
+          v?: TVariables,
+          h?: Record<string, string>,
+        ) => Promise<TData>
+      )(query, variables, headers);
     } catch (error: unknown) {
       // Global error handling for auth failures (like Apollo ErrorLink)
-      const err = error as {
-        response?: { errors?: { extensions?: { status?: number } }[] };
+      const gqlError = error as {
+        response?: { errors?: Array<{ extensions?: { status?: number } }> };
       };
-      if (err?.response?.errors) {
-        err.response.errors.forEach((gqlError) => {
-          const status = (gqlError?.extensions?.status as number) || 500;
+      if (gqlError?.response?.errors) {
+        gqlError.response.errors.forEach((err) => {
+          const status = err?.extensions?.status ?? 500;
           if (isAuthStatus(status)) {
             clearAccessToken();
             if (typeof window !== "undefined") {
@@ -77,7 +83,7 @@ export const fetcher = <
           }
         });
       }
-      throw err;
+      throw error;
     }
   };
 };

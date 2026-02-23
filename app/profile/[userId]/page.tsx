@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  useContributorReputation,
-  useCompletionHistory,
-} from "@/hooks/use-reputation";
+import { useContributorReputation } from "@/hooks/use-reputation";
 import { useBounties } from "@/hooks/use-bounties";
 import { ReputationCard } from "@/components/reputation/reputation-card";
 import { CompletionHistory } from "@/components/reputation/completion-history";
@@ -19,20 +16,7 @@ import { AlertCircle, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMemo } from "react";
-
-function deriveBountyStatus(bounty: {
-  status: string;
-  claimExpiresAt?: string | null;
-}): "completed" | "expired" | "active" {
-  if (bounty.status === "closed") return "completed";
-  if (bounty.status === "claimed" && bounty.claimExpiresAt) {
-    const expiry = new Date(bounty.claimExpiresAt);
-    if (!Number.isNaN(expiry.getTime()) && expiry < new Date()) {
-      return "expired";
-    }
-  }
-  return "active";
-}
+import { useCompletionHistory } from "@/hooks/use-reputation";
 
 export default function ProfilePage() {
   const params = useParams();
@@ -47,74 +31,85 @@ export default function ProfilePage() {
     isLoading: isBountiesLoading,
     error: bountiesError,
   } = useBounties();
-  const { data: completionData, isLoading: completionLoading } =
-    useCompletionHistory(userId);
 
-  const completionRecords = completionData?.records ?? [];
+  const {
+    data: completionData,
+    isLoading: historyLoading,
+    isError: historyError,
+  } = useCompletionHistory(userId);
 
-  const earningsSummary = useMemo<EarningsSummaryType>(() => {
-    const currency = reputation?.stats.earningsCurrency ?? "USDC";
-    const allBounties = bountyResponse?.data ?? [];
-    const userBounties = allBounties.filter(
-      (b) =>
-        b.claimedBy === userId && (b.rewardCurrency ?? "USDC") === currency,
-    );
-
-    let totalEarned = 0;
-    let pendingAmount = 0;
-    const payoutHistory: EarningsSummaryType["payoutHistory"] = [];
-
-    for (const bounty of userBounties) {
-      const amount = bounty.rewardAmount ?? 0;
-      const status = deriveBountyStatus(bounty);
-
-      if (status === "completed") {
-        totalEarned += amount;
-        // Use claimExpiresAt as a proxy for payout date, fall back to createdAt.
-        const payoutDate = bounty.claimExpiresAt ?? bounty.createdAt;
-        payoutHistory.push({ amount, date: payoutDate, status: "completed" });
-      } else if (status === "active") {
-        // "active" — claimed but not yet submitted; include in history so
-        // the "Pending" card total matches the sum of history rows.
-        pendingAmount += amount;
-        payoutHistory.push({
-          amount,
-          date: bounty.claimExpiresAt ?? bounty.createdAt,
-          status: "processing",
-        });
-      }
-      // "expired" claims are forfeited; omit from both totals and history
-    }
-
-    // If no real claim data, fall back to reputation stats
-    if (userBounties.length === 0 && reputation) {
-      totalEarned = reputation.stats.totalEarnings;
-      // pendingAmount has no reputation-stats equivalent; intentionally left as 0
-    }
-
-    return { totalEarned, pendingAmount, currency, payoutHistory };
-  }, [bountyResponse?.data, userId, reputation]);
+  const records = completionData?.records ?? [];
 
   const myClaims = useMemo<MyClaim[]>(() => {
     const bounties = bountyResponse?.data ?? [];
 
     return bounties
-      .filter((bounty) => bounty.claimedBy === userId)
-      .map((bounty) => ({
-        bountyId: bounty.id,
-        title: bounty.issueTitle,
-        status: deriveBountyStatus(bounty),
-        rewardAmount: bounty.rewardAmount ?? undefined,
-      }));
+      .filter((bounty) => bounty.createdBy === userId)
+      .map((bounty) => {
+        let status = "unknown";
+
+        if (bounty.status === "COMPLETED") {
+          status = "completed";
+        } else if (bounty.status === "IN_PROGRESS") {
+          status = "in-progress";
+        } else if (bounty.status === "CANCELLED") {
+          status = "cancelled";
+        } else if (bounty.status === "DRAFT") {
+          status = "draft";
+        } else if (bounty.status === "SUBMITTED") {
+          status = "submitted";
+        } else if (bounty.status === "DISPUTED") {
+          status = "disputed";
+        } else if (bounty.status === "OPEN") {
+          status = "open";
+        }
+
+        return {
+          bountyId: bounty.id,
+          title: bounty.title,
+          status,
+          rewardAmount: bounty.rewardAmount ?? undefined,
+        };
+      });
   }, [bountyResponse?.data, userId]);
+
+  const earningsSummary = useMemo<EarningsSummaryType>(() => {
+    const bounties = bountyResponse?.data ?? [];
+
+    const summary: EarningsSummaryType = {
+      totalEarned: 0,
+      pendingAmount: 0,
+      currency: "USDC",
+      payoutHistory: [],
+    };
+
+    bounties.forEach((bounty) => {
+      if (bounty.status === "COMPLETED") {
+        const amount = Number(bounty.rewardAmount) || 0;
+        summary.totalEarned += amount;
+        summary.payoutHistory.push({
+          amount,
+          date: bounty.updatedAt || bounty.createdAt,
+          status: "completed",
+        });
+      } else if (
+        bounty.status === "SUBMITTED" ||
+        bounty.status === "DISPUTED"
+      ) {
+        summary.pendingAmount += Number(bounty.rewardAmount) || 0;
+      }
+    });
+
+    return summary;
+  }, [bountyResponse?.data]);
 
   if (isLoading || isBountiesLoading) {
     return (
       <div className="container mx-auto py-8">
         <Skeleton className="h-10 w-32 mb-8" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Skeleton className="h-[25rem] md:col-span-1" />
-          <Skeleton className="h-[25rem] md:col-span-2" />
+          <Skeleton className="h-100 md:col-span-1" />
+          <Skeleton className="h-100 md:col-span-2" />
         </div>
       </div>
     );
@@ -215,16 +210,16 @@ export default function ProfilePage() {
 
             <TabsContent value="history" className="mt-6">
               <h2 className="text-xl font-bold mb-4">Activity History</h2>
-              {completionLoading ? (
-                <Skeleton className="h-100 w-full" />
+              {historyLoading ? (
+                <Skeleton className="h-48 w-full" />
+              ) : historyError ? (
+                <div className="text-center text-muted-foreground">
+                  Unable to load activity.
+                </div>
               ) : (
                 <CompletionHistory
-                  records={completionRecords}
-                  description={
-                    completionRecords.length > 0
-                      ? `Showing the last ${completionRecords.length} completed bounties.`
-                      : undefined
-                  }
+                  records={records}
+                  description={`Showing the last ${records.length} completed bounties.`}
                 />
               )}
             </TabsContent>
