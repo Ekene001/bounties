@@ -102,20 +102,7 @@ export function useClaimBounty() {
   return useMutation({
     mutationFn: (id: string) => bountiesApi.claim(id),
     onSuccess: (data, id) => {
-      queryClient.setQueryData<Bounty>(bountyKeys.detail(id), (old) => {
-        if (!old) return old;
-
-        // If the API returned a valid object, use it
-        if (data) {
-          return data;
-        }
-
-        // Otherwise, safely patch the existing data with the claimed state
-        return {
-          ...old,
-          status: "IN_PROGRESS",
-        };
-      });
+      queryClient.setQueryData<Bounty>(bountyKeys.detail(id), data);
 
       // Invalidate the list view so the main bounties board updates
       queryClient.invalidateQueries({ queryKey: bountyKeys.lists() });
