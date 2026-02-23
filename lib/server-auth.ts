@@ -54,10 +54,11 @@ async function fetchValidatedSession(
         continue;
       }
 
-      const payload = (await response.json()) as
-        | SessionPayload
-        | { data?: SessionPayload };
-      const normalized = "data" in payload ? payload.data : payload;
+      const payload: unknown = await response.json();
+      const normalized: SessionPayload | undefined =
+        typeof payload === "object" && payload !== null && "data" in payload
+          ? (payload as { data?: SessionPayload }).data
+          : (payload as SessionPayload);
 
       if (normalized?.user?.id) {
         return normalized;
