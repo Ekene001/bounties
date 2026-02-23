@@ -1,18 +1,11 @@
 import {
   useBountiesQuery,
-  useBountyQuery,
   type BountyQueryInput,
   type BountyFieldsFragment,
 } from "@/lib/graphql/generated";
+import { bountyKeys } from "@/lib/query/query-keys";
 
-export const bountyKeys = {
-  all: ["Bounties"] as const,
-  lists: () => ["Bounties"] as const,
-  list: (params?: BountyQueryInput) =>
-    useBountiesQuery.getKey({ query: params }),
-  details: () => ["Bounty"] as const,
-  detail: (id: string) => useBountyQuery.getKey({ id }),
-};
+export { bountyKeys };
 
 export function useBounties(params?: BountyQueryInput) {
   const { data, ...rest } = useBountiesQuery({ query: params });
@@ -26,7 +19,10 @@ export function useBounties(params?: BountyQueryInput) {
             page: params?.page ?? 1,
             limit: data.bounties.limit,
             total: data.bounties.total,
-            totalPages: Math.ceil(data.bounties.total / data.bounties.limit),
+            totalPages:
+              data.bounties.limit > 0
+                ? Math.ceil(data.bounties.total / data.bounties.limit)
+                : 0,
           },
         }
       : undefined,

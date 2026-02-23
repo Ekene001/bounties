@@ -14,7 +14,7 @@ import {
   type UpdateBountyMutationVariables,
   type DeleteBountyMutationVariables,
 } from "@/lib/graphql/generated";
-import { bountyKeys } from "./use-bounties";
+import { bountyKeys } from "@/lib/query/query-keys";
 
 export function useCreateBounty() {
   const queryClient = useQueryClient();

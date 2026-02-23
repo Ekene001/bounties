@@ -18,6 +18,7 @@ import Link from "next/link";
 function VerifyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const defaultCallback = "/bounty";
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading",
   );
@@ -26,7 +27,15 @@ function VerifyContent() {
   useEffect(() => {
     const verifyToken = async () => {
       const token = searchParams.get("token");
-      const callbackURL = searchParams.get("callbackURL") || "/bounty";
+      const rawCallbackURL = searchParams.get("callbackURL") ?? defaultCallback;
+      const isSafeRelativeCallback =
+        rawCallbackURL.startsWith("/") &&
+        !rawCallbackURL.startsWith("//") &&
+        !rawCallbackURL.includes("\\") &&
+        !/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(rawCallbackURL);
+      const validatedCallback = isSafeRelativeCallback
+        ? rawCallbackURL
+        : defaultCallback;
 
       if (!token) {
         setStatus("error");
@@ -38,7 +47,7 @@ function VerifyContent() {
         const { error } = await authClient.magicLink.verify({
           query: {
             token,
-            callbackURL,
+            callbackURL: validatedCallback,
           },
         });
 
@@ -51,7 +60,7 @@ function VerifyContent() {
           // Redirect is handled by Better Auth if successful,
           // but we can also manually redirect if needed after a short delay
           setTimeout(() => {
-            router.push(callbackURL);
+            router.push(validatedCallback);
           }, 2000);
         }
       } catch (err) {

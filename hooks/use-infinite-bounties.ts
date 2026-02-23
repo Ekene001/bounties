@@ -7,13 +7,13 @@ import {
   type BountyFieldsFragment,
 } from "@/lib/graphql/generated";
 import { type PaginatedResponse } from "@/lib/api/types";
-import { bountyKeys } from "./use-bounties";
+import { bountyKeys } from "@/lib/query/query-keys";
 
 const DEFAULT_LIMIT = 20;
 
 export function useInfiniteBounties(params?: Omit<BountyQueryInput, "page">) {
   return useInfiniteQuery<PaginatedResponse<BountyFieldsFragment>>({
-    queryKey: [...bountyKeys.lists(), "infinite", params] as const,
+    queryKey: bountyKeys.infinite(params),
     queryFn: async ({ pageParam }) => {
       const response = await fetcher<
         BountiesQuery,
@@ -46,13 +46,4 @@ export function useInfiniteBounties(params?: Omit<BountyQueryInput, "page">) {
       return page > 1 ? page - 1 : undefined;
     },
   });
-}
-
-/**
- * Helper to flatten infinite query pages
- */
-export function flattenBountyPages(
-  pages: PaginatedResponse<BountyFieldsFragment>[] | undefined,
-): BountyFieldsFragment[] {
-  return pages?.flatMap((page) => page.data) ?? [];
 }

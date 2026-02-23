@@ -21,7 +21,10 @@ export async function getAccessToken(): Promise<string | null> {
   // Better Auth tokens can contain dots and special characters.
   // We use a regex to extract the value precisely.
   const name = "boundless_auth.session_token";
-  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = document.cookie.match(
+    new RegExp("(^| )" + escapedName + "=([^;]+)"),
+  );
   if (match) {
     // We return the decoded value from the cookie.
     // If it's URL encoded (e.g. contains %3D), we decode it for use in headers.
