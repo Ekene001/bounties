@@ -10,7 +10,6 @@ export const bountyKeys = {
     [...bountyKeys.lists(), { query: params }] as const,
   infinite: (params?: Omit<BountyQueryInput, "page">) =>
     [...bountyKeys.lists(), "infinite", { query: params }] as const,
-  details: () => [...bountyKeys.all, "details"] as const,
   detail: (id: string) => useBountyQuery.getKey({ id }),
 };
 
