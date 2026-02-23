@@ -32,6 +32,7 @@ import {
 } from "@/components/bounty/forms/schemas";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { bountiesApi } from "@/lib/api/bounties";
+import { ApiError } from "@/lib/api/errors";
 import { authClient } from "@/lib/auth-client";
 import { mockWalletInfo } from "@/lib/mock-wallet";
 
@@ -47,7 +48,9 @@ const getBaseDefaults = (): SubmissionFormValue => ({
   demoUrl: "",
   explanation: "",
   attachments: [],
-  walletAddress: mockWalletInfo.address,
+  // TODO: replace with actual connected wallet address from the wallet provider
+  walletAddress:
+    process.env.NODE_ENV === "production" ? "" : mockWalletInfo.address,
 });
 
 export function SubmissionDialog({
@@ -140,11 +143,26 @@ export function SubmissionDialog({
         setSubmitted(false);
       }, 2000);
     } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Failed to submit. Please try again.";
-      toast.error(message);
+      if (ApiError.isApiError(err) && err.status === 400) {
+        const details = err.details as {
+          fieldErrors?: Record<string, string[]>;
+        };
+        if (details?.fieldErrors) {
+          Object.entries(details.fieldErrors).forEach(([field, messages]) => {
+            form.setError(field as keyof SubmissionFormValue, {
+              message: messages[0],
+            });
+          });
+        } else {
+          toast.error(err.message);
+        }
+      } else {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Failed to submit. Please try again.";
+        toast.error(message);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -154,6 +172,9 @@ export function SubmissionDialog({
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-lg bg-background border-border">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Submission Sent</DialogTitle>
+          </DialogHeader>
           <div className="flex flex-col items-center justify-center gap-4 py-8 text-center">
             <div className="size-16 rounded-full bg-emerald-500/10 flex items-center justify-center">
               <Send className="size-7 text-emerald-400" />
@@ -304,6 +325,7 @@ export function SubmissionDialog({
                           size="icon"
                           className="shrink-0 size-9 text-muted-foreground hover:text-destructive"
                           onClick={() => remove(index)}
+                          aria-label={`Remove attachment ${index + 1}`}
                         >
                           <Trash2 className="size-4" />
                         </Button>

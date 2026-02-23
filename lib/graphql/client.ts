@@ -1,3 +1,5 @@
+"use client";
+
 import { GraphQLClient } from "graphql-request";
 import { isAuthStatus } from "./errors";
 
@@ -41,7 +43,10 @@ const url = process.env.NEXT_PUBLIC_GRAPHQL_URL || "/api/graphql";
 export const graphQLClient = new GraphQLClient(url);
 
 // A custom fetcher for @graphql-codegen/typescript-react-query
-export const fetcher = <TData, TVariables extends object = object>(
+export const fetcher = <
+  TData,
+  TVariables extends Record<string, unknown> = Record<string, unknown>,
+>(
   query: string,
   variables?: TVariables,
 ) => {

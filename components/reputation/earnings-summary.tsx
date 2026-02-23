@@ -19,8 +19,7 @@ interface EarningsSummaryProps {
 }
 
 export function EarningsSummary({ earnings }: EarningsSummaryProps) {
-  const currencySymbol =
-    earnings.currency === "USDC" ? "USDC" : earnings.currency;
+  const currencySymbol = earnings.currency;
 
   return (
     <div className="space-y-4">

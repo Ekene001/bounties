@@ -113,8 +113,8 @@ export default function ProfilePage() {
       <div className="container mx-auto py-8">
         <Skeleton className="h-10 w-32 mb-8" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Skeleton className="h-100 md:col-span-1" />
-          <Skeleton className="h-100 md:col-span-2" />
+          <Skeleton className="h-[25rem] md:col-span-1" />
+          <Skeleton className="h-[25rem] md:col-span-2" />
         </div>
       </div>
     );
@@ -244,6 +244,10 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="space-y-6">
+                  <p className="text-xs text-muted-foreground">
+                    Earnings shown in {earningsSummary.currency} only. Bounties
+                    in other currencies are not included.
+                  </p>
                   <EarningsSummary earnings={earningsSummary} />
                   <MyClaims claims={myClaims} />
                 </div>

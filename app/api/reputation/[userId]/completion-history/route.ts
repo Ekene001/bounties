@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { BountyStore } from "@/lib/store";
+import { getCurrentUser } from "@/lib/server-auth";
 import type { BountyCompletionRecord } from "@/types/reputation";
 import type { Bounty } from "@/types/bounty";
 
@@ -9,19 +10,23 @@ const DIFFICULTY_MAP = {
   advanced: "ADVANCED" as const,
 };
 
-function bountyToCompletionRecord(
-  bounty: Bounty,
-  index: number,
-): BountyCompletionRecord {
+function bountyToCompletionRecord(bounty: Bounty): BountyCompletionRecord {
   const difficulty = bounty.difficulty
     ? (DIFFICULTY_MAP[bounty.difficulty] ?? "BEGINNER")
     : "BEGINNER";
   const reward = bounty.rewardAmount ?? 0;
   const claimedAt = bounty.claimedAt ?? bounty.createdAt;
   const completedAt = bounty.updatedAt;
+  const completionTimeHours = Math.max(
+    0,
+    Math.round(
+      (new Date(completedAt).getTime() - new Date(claimedAt).getTime()) /
+        (1000 * 60 * 60),
+    ),
+  );
 
   return {
-    id: `completion-${bounty.id}-${index}`,
+    id: `completion-${bounty.id}`,
     bountyId: bounty.id,
     bountyTitle: bounty.issueTitle,
     projectName: bounty.projectName,
@@ -31,10 +36,10 @@ function bountyToCompletionRecord(
     rewardCurrency: bounty.rewardCurrency,
     claimedAt,
     completedAt,
-    completionTimeHours: 0,
+    completionTimeHours,
     maintainerRating: null,
     maintainerFeedback: null,
-    pointsEarned: reward,
+    pointsEarned: 0,
   };
 }
 
@@ -43,6 +48,11 @@ export async function GET(
   context: { params: Promise<{ userId: string }> },
 ) {
   try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { userId } = await context.params;
     const { searchParams } = new URL(request.url);
     const limit = Math.min(
@@ -58,8 +68,8 @@ export async function GET(
 
     const totalCount = completed.length;
     const paginated = completed.slice(offset, offset + limit);
-    const records: BountyCompletionRecord[] = paginated.map((b, i) =>
-      bountyToCompletionRecord(b, offset + i),
+    const records: BountyCompletionRecord[] = paginated.map((b) =>
+      bountyToCompletionRecord(b),
     );
 
     return NextResponse.json({

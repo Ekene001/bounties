@@ -26,7 +26,7 @@ export async function POST(
     if (!parsed.success) {
       const fieldErrors = parsed.error.flatten().fieldErrors;
       return NextResponse.json(
-        { error: "Validation failed", fieldErrors },
+        { message: "Validation failed", details: { fieldErrors } },
         { status: 400 },
       );
     }
